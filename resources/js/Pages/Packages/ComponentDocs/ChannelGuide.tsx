@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { ChannelGuide, Text, type Channel, type ChannelPlayerValue } from "@particle-academy/react-fancy";
+import { ChannelGuide, type Channel, type ChannelPlayerValue } from "@particle-academy/react-fancy";
 import { PLAYLIST_CHANNEL, RADIO_CHANNELS, riverwestChannel, SINGLE_TRACK_CHANNEL } from "../../../radio/channels";
 import { tunedTo } from "./ChannelPlayer";
 import type { ComponentDoc } from "./types";
+import { LiveState } from "../LiveState";
 
 export function ChannelGuideExample({ layout, showValue = true }: { layout?: "list" | "grid"; showValue?: boolean }) {
     const [value, setValue] = useState<ChannelPlayerValue>(() => tunedTo(RADIO_CHANNELS[0]));
     return (
         <div className="w-full max-w-xl space-y-2">
             <ChannelGuide channels={RADIO_CHANNELS} value={value} onChange={setValue} layout={layout} />
-            {showValue && (
-                <Text size="sm" className="font-mono break-all">
-                    channelId: {JSON.stringify(value.channelId)}, trackId: {JSON.stringify(value.trackId)}
-                </Text>
-            )}
+            {showValue && <LiveState value={{ channelId: value.channelId, trackId: value.trackId }} />}
         </div>
     );
 }

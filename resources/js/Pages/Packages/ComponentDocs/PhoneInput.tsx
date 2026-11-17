@@ -1,5 +1,6 @@
 import { useState, type MouseEvent } from "react";
 import type { ComponentDoc } from "./types";
+import { LiveState } from "../LiveState";
 import { Button, Form, PhoneInput, Text, type PhoneInputDetail } from "@particle-academy/react-fancy";
 
 /*
@@ -10,16 +11,7 @@ import { Button, Form, PhoneInput, Text, type PhoneInputDetail } from "@particle
 
 function Readout({ value, detail }: { value: string | null; detail?: PhoneInputDetail | null }) {
     return (
-        <div className="space-y-1">
-            <Text size="xs" className="font-mono !text-zinc-500" data-demo="phone-input-value">
-                value: {JSON.stringify(value)}
-            </Text>
-            {detail !== undefined && (
-                <Text size="xs" className="font-mono break-all !text-zinc-500" data-demo="phone-input-detail">
-                    detail: {JSON.stringify(detail)}
-                </Text>
-            )}
-        </div>
+        <LiveState value={detail !== undefined ? { value, detail } : { value }} demo="phone-input-value" />
     );
 }
 

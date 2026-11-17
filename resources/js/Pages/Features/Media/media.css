@@ -32,7 +32,6 @@
   border: 1px solid var(--media-edge);
   background: var(--media-panel);
 }
-.media-readout { font-family: var(--font-mono, ui-monospace, monospace); overflow-wrap: anywhere; }
 
 /* Viewers demo */
 .media-viewers { display: flex; flex-direction: column; gap: 12px; }

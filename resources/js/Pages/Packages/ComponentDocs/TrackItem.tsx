@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button, Text, TrackItem } from "@particle-academy/react-fancy";
+import { Button, TrackItem } from "@particle-academy/react-fancy";
 import { RADIO_TRACKS } from "../../../radio/channels";
 import type { ComponentDoc } from "./types";
+import { LiveState } from "../LiveState";
 
 export function TrackItemExample() {
     const [current, setCurrent] = useState<string>(RADIO_TRACKS[0]!.id);
@@ -28,9 +29,7 @@ export function TrackItemExample() {
                     }
                 />
             ))}
-            <Text size="sm" className="font-mono">
-                current: {current}, starred: {JSON.stringify(starred)}
-            </Text>
+            <LiveState value={{ current, starred }} />
         </div>
     );
 }

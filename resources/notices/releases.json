@@ -24,10 +24,10 @@
         "fancy-cli": "0.9.1",
         "fancy-cms": "0.9.1",
         "fancy-cms-ui": "0.14.1",
-        "fancy-code": "0.17.1",
+        "fancy-code": "0.17.2",
         "fancy-compliance": "0.1.2",
         "fancy-compliance-ui": "0.4.0",
-        "fancy-conformance": "0.48.0",
+        "fancy-conformance": "0.49.0",
         "fancy-connector-core": "0.15.2",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.6.0",
@@ -106,7 +106,7 @@
         "last-word-ui": "0.6.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.148.1",
-        "prism-acp": "0.1.1",
+        "prism-acp": "0.1.2",
         "prism-acp-ts": "0.42.0",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.2.0",
@@ -142,6 +142,30 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "fancy-code",
+            "registry": "npm",
+            "version": "0.17.2",
+            "published_at": "2026-11-17T04:46:39Z",
+            "first": false,
+            "summary": "A text file fills a sized <FileViewer>"
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.49.0",
+            "published_at": "2026-11-17T03:47:11Z",
+            "first": false,
+            "summary": "Five fun-lab/* suites, 67 rows: the gamification engine, for laravel-fun-lab and its Node and Python twins"
+        },
+        {
+            "slug": "prism-acp",
+            "registry": "composer",
+            "version": "0.1.2",
+            "published_at": "2026-11-16T19:46:12Z",
+            "first": false,
+            "summary": "Codex: a JSON-RPC response that matches no pending request is no longer forwarded"
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",
@@ -6557,38 +6581,6 @@
             "published_at": "2026-09-18T13:02:36Z",
             "first": false,
             "summary": "for_each now executes its item lane once per item"
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.31.0",
-            "published_at": "2026-09-18T00:01:25Z",
-            "first": false,
-            "summary": "BREAKING: flow/kind-declaration-surface row 0106-for_each-declares-its-fields now requires failures"
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.30.0",
-            "published_at": "2026-09-17T23:53:52Z",
-            "first": false,
-            "summary": "BREAKING: flow/kind-declaration-surface row 0106-for_each-declares-its-fields now requires results alongside items and…"
-        },
-        {
-            "slug": "fancy-cms-ui",
-            "registry": "npm",
-            "version": "0.7.1",
-            "published_at": "2026-09-17T23:21:43Z",
-            "first": false,
-            "summary": "Malformed authored documents now render empty instead of throwing during React render"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.58.0",
-            "published_at": "2026-09-17T20:55:53Z",
-            "first": false,
-            "summary": "A node inside a subflow that completed before a human gate is no longer re-executed when the parent resumes"
         }
     ]
 }

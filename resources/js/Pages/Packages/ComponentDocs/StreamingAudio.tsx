@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { StreamingAudio, Text, type StreamingAudioValue, type StreamingStation } from "@particle-academy/react-fancy";
+import { StreamingAudio, type StreamingAudioValue, type StreamingStation } from "@particle-academy/react-fancy";
 import type { ComponentDoc } from "./types";
+import { LiveState } from "../LiveState";
 
 /*
  * The stations are this site's own radio (resources/js/radio): Thunder in the
@@ -42,11 +43,7 @@ export function StreamingAudioExample({
     return (
         <div className="w-full max-w-xl space-y-2">
             <StreamingAudio stations={stations} value={value} onChange={setValue} layout={layout} />
-            {showValue && (
-                <Text size="sm" className="font-mono">
-                    value: {JSON.stringify(value)}
-                </Text>
-            )}
+            {showValue && <LiveState value={value} />}
         </div>
     );
 }

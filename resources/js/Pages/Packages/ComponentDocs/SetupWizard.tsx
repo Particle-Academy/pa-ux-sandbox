@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ComponentDoc } from "./types";
-import { SetupWizard, Text } from "@particle-academy/react-fancy";
+import { LiveState } from "../LiveState";
+import { SetupWizard } from "@particle-academy/react-fancy";
 import type { SetupWizardStep, SetupWizardValue, SetupWizardVerifyResult } from "@particle-academy/react-fancy";
 
 /**
@@ -66,9 +67,7 @@ function ControlledWizardExample() {
                 tokens={EXAMPLE_PAY_TOKENS}
                 verify={verifyExamplePay}
             />
-            <Text size="xs" className="font-mono !text-zinc-500">
-                value: {JSON.stringify(value)}
-            </Text>
+            <LiveState value={value} />
         </div>
     );
 }

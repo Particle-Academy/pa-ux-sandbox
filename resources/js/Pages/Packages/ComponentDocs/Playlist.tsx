@@ -10,6 +10,7 @@ import {
 import { PLAYLIST_CHANNEL, RADIO_TRACKS, SINGLE_TRACK_CHANNEL } from "../../../radio/channels";
 import { tunedTo } from "./ChannelPlayer";
 import type { ComponentDoc } from "./types";
+import { LiveState } from "../LiveState";
 
 /** An editable playlist over the radio's tracks; the library is every track the radio hosts. */
 export function PlaylistExample({ start = RADIO_TRACKS.slice(0, 2), showValue = true }: { start?: MediaTrack[]; showValue?: boolean }) {
@@ -24,11 +25,7 @@ export function PlaylistExample({ start = RADIO_TRACKS.slice(0, 2), showValue = 
                 onTracksChange={(_channelId: string, tracks: MediaTrack[]) => setChannel((c) => ({ ...c, tracks }))}
                 library={RADIO_TRACKS}
             />
-            {showValue && (
-                <Text size="sm" className="font-mono break-all">
-                    tracks: {JSON.stringify(channel.tracks.map((t) => t.id))}, trackId: {JSON.stringify(value.trackId)}
-                </Text>
-            )}
+            {showValue && <LiveState value={{ tracks: channel.tracks.map((t) => t.id), trackId: value.trackId }} />}
         </div>
     );
 }

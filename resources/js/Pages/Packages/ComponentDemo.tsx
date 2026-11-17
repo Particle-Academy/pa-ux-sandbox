@@ -6,6 +6,7 @@ import { FeatureGate, PricingTable, FeatureMatrix, PlanFeaturesEditor, type Plan
 // cannot drift apart.
 import { CR_LESSON, CR_CURRICULUM, CR_QUESTION, CR_TEST, CR_COURSE, CR_ENROLLMENT, CR_ATTEMPT, JB_POSTING, JB_APPLICATION, TA_HISTORY, TA_PLAN, SAMPLE_TSX } from "./ComponentPreviews";
 import { MotionDockDemo, MotionMicrositeDemo } from "./MotionDemos";
+import { LiveState } from "./LiveState";
 import { InstallBanner, OfflineBanner } from "@particle-academy/fancy-pwa";
 import { PasskeyStatus, PasskeyManager, PasskeySignIn, type PasskeyManagerState, type PasskeySignInState} from "@particle-academy/fancy-passkeys-ui";
 import "@particle-academy/fancy-passkeys-ui/styles.css";
@@ -1733,7 +1734,7 @@ function SetupWizardDemo() {
                     tokens={EXAMPLE_PAY_TOKENS}
                     verify={verifyExamplePay}
                 />
-                <Text size="xs" className="mt-2 font-mono !text-zinc-500">value: {JSON.stringify(value)}</Text>
+                <LiveState value={value} />
             </div>
         </DemoNote>
     );
@@ -2712,7 +2713,7 @@ function NumberFieldDemo() {
     return (
         <div className="space-y-2">
             <NumberField label="Quantity" value={value} onValueChange={setValue} min={0} step={1} />
-            <Text size="xs" className="!text-zinc-500 font-mono">value: {JSON.stringify(value)}</Text>
+            <LiveState value={{ value }} />
         </div>
     );
 }
@@ -2723,7 +2724,7 @@ function PhoneInputDemo() {
     return (
         <div className="space-y-2">
             <PhoneInput label="Mobile number" locale="en" defaultCountry="MM" value={value} onValueChange={setValue} />
-            <Text size="xs" className="!text-zinc-500 font-mono">value: {JSON.stringify(value)}</Text>
+            <LiveState value={{ value }} />
         </div>
     );
 }
@@ -6351,6 +6352,7 @@ function FileViewerDemo() {
                         value={FILE_VIEWER_FILES[filename]}
                         readOnly
                         lineNumbers={lineNumbers}
+                        style={{ height: "100%" }}
                     />
                 </div>
             </div>

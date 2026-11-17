@@ -11,13 +11,23 @@ type DemoFile =
     | { name: string; kind: "media"; src: string; mime: string; alt: string }
     | { name: string; kind: "text"; value: string };
 
-const PLAYER_SOURCE = `import { StreamingAudio } from "@particle-academy/react-fancy";
+const PLAYER_SOURCE = `import { useState } from "react";
+import { StreamingAudio, type StreamingAudioValue } from "@particle-academy/react-fancy";
 
-<StreamingAudio
-  stations={[{ id: "ep1", name: "Episode 1", src: "/media/episode-1.mp3" }]}
-  value={value}
-  onChange={setValue}
-/>;
+const stations = [
+  { id: "fancy", name: "Make it Fancy", src: "/showcase-assets/audio/make-it-fancy.mp3" },
+];
+
+export function Player() {
+  const [value, setValue] = useState<StreamingAudioValue>({
+    stationId: "fancy",
+    playing: false,
+    volume: 0.8,
+    muted: false,
+  });
+
+  return <StreamingAudio stations={stations} value={value} onChange={setValue} />;
+}
 `;
 
 const FILES: DemoFile[] = [
@@ -53,7 +63,7 @@ export function ViewersDemo() {
                 {file.kind === "media" ? (
                     <MediaViewer key={file.name} src={file.src} mime={file.mime} alt={file.alt} style={{ height: "100%" }} />
                 ) : (
-                    <FileViewer key={file.name} filename={file.name} value={file.value} readOnly />
+                    <FileViewer key={file.name} filename={file.name} value={file.value} readOnly style={{ height: "100%" }} />
                 )}
             </div>
         </div>

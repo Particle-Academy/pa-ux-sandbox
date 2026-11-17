@@ -10,6 +10,7 @@ import {
 } from "@particle-academy/react-fancy";
 import { PLAYLIST_CHANNEL, RADIO_CHANNELS, SINGLE_TRACK_CHANNEL, riverwestChannel } from "../../../radio/channels";
 import type { ComponentDoc } from "./types";
+import { LiveState } from "../LiveState";
 
 /*
  * Every channel here is the showcase radio's (resources/js/radio/channels.ts):
@@ -41,11 +42,7 @@ export function ChannelPlayerExample({
                 onChange={setValue}
                 onError={(channelId: string, kind: ChannelPlayerErrorKind) => setError(`${channelId}: ${kind}`)}
             />
-            {showValue && (
-                <Text size="sm" className="font-mono break-all">
-                    value: {JSON.stringify(value)}
-                </Text>
-            )}
+            {showValue && <LiveState value={value} />}
             {error && (
                 <Text size="sm" className="font-mono">
                     onError: {error}

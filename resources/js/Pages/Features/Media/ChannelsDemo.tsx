@@ -4,7 +4,6 @@ import {
     ChannelPlayer,
     MediaQueue,
     Playlist,
-    Text,
     createChannelValue,
     findChannel,
     selectChannel,
@@ -105,9 +104,6 @@ export function ChannelsDemo() {
                     />
                 )}
                 {channel?.kind === "playlist" && <MediaQueue channel={channel} value={value} onChange={setValue} />}
-                <Text as="p" size="sm" color="muted" className="media-readout" data-media-readout="channels">
-                    value: {JSON.stringify(value)}
-                </Text>
             </div>
         </div>
     );

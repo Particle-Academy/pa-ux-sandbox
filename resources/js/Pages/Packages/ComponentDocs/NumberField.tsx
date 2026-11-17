@@ -1,13 +1,10 @@
 import { useState, type MouseEvent } from "react";
 import type { ComponentDoc } from "./types";
+import { LiveState } from "../LiveState";
 import { Button, Form, NumberField, Text } from "@particle-academy/react-fancy";
 
 function Readout({ value }: { value: unknown }) {
-    return (
-        <Text size="xs" className="font-mono !text-zinc-500" data-demo="number-field-value">
-            value: {JSON.stringify(value)}
-        </Text>
-    );
+    return <LiveState value={{ value }} demo="number-field-value" />;
 }
 
 function BlankExample() {

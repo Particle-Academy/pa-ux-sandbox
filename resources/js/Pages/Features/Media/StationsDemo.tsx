@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { StreamingAudio, Text, type StreamingAudioValue } from "@particle-academy/react-fancy";
+import { StreamingAudio, type StreamingAudioValue } from "@particle-academy/react-fancy";
 import { useRadio } from "../../../radio/RadioProvider";
 import { RADIO_STATIONS } from "../../../radio/stations";
 
@@ -44,9 +44,6 @@ export function StationsDemo() {
     return (
         <div className="media-stations" data-media-demo="stations">
             <StreamingAudio stations={RADIO_STATIONS} value={value} onChange={setValue} />
-            <Text as="p" size="sm" color="muted" className="media-readout" data-media-readout="">
-                value: {JSON.stringify(value)}
-            </Text>
         </div>
     );
 }

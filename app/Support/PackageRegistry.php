@@ -81,20 +81,6 @@ class PackageRegistry
         // serves a version -- read from the registry, not `npm view`.
         'fancy-sockets',
 
-        // `fancy-fun-lab-js` and `fancy-fun-lab-py` -- the Node and Python twins
-        // of laravel-fun-lab, BUILT 2026-11-17 (moved out of PLANNED the day
-        // they passed all 67 fun-lab/* rows). Neither name exists on a registry:
-        // npm needs the owner's first publish and PyPI the owner's pending
-        // publisher, so listing them would offer `npm install
-        // @particle-academy/fancy-fun-lab` and `pip install fancy-fun-lab` for
-        // names that 404.
-        //
-        // REMOVE EACH SLUG when registry.npmjs.org/@particle-academy%2Ffancy-fun-lab
-        // and pypi.org/pypi/fancy-fun-lab/json respectively serve a version --
-        // read from the registry, not `npm view`.
-        'fancy-fun-lab-js',
-        'fancy-fun-lab-py',
-
         // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.

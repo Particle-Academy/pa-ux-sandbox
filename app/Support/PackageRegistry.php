@@ -392,6 +392,18 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['packagist' => 'particle-academy/fancy-chat-php'],
             'why' => 'Laravel agent chat on Prism Harness (CC-fancy-0042): HarnessBackend runs each turn on a Harness session (RunStep g282.1, streamed approvals, host-resolved attachments), served as an append-only thread log with atomic seq, SSE plus long-poll with resumable replay, decision endpoints that accept human actors only, the turn machine, staged writes and typed approval, passing the same fixtures as fancy-chat-js. Optional KnowledgeBridge on prism-graph. Absorbed fancy-chat-prism-php in 0.2.0. Design: .ai/plans/agent-chat-on-prism.md.',
         ],
+        'fancy-fun-lab-js' => [
+            'name' => '@particle-academy/fancy-fun-lab',
+            'repo' => 'Particle-Academy/fancy-fun-lab-js',
+            'registries' => ['npm' => '@particle-academy/fancy-fun-lab'],
+            'why' => 'Node/TypeScript twin of laravel-fun-lab, the gamification engine (canon gap 2.4a: the only server capability with no Node pair). Engine core to parity: catalog setup, XP awards, metric and weighted group levels, achievements, prizes, leaderboards, event log and analytics, plus the PHP resource JSON shapes so fancy-fun-lab-ui runs on a Node backend. Zero runtime deps; a store contract with in-memory and node:sqlite adapters. Held to the PHP engine by the fun-lab/* fixture suites in fancy-conformance. Owner approved 2026-11-17 (q_571dafd9, q_a2d27647). Design: .ai/plans/fun-lab-twins.md. npm name free 2026-11-16; the first publish is the owner\'s.',
+        ],
+        'fancy-fun-lab-py' => [
+            'name' => 'fancy-fun-lab',
+            'repo' => 'Particle-Academy/fancy-fun-lab-py',
+            'registries' => ['pypi' => 'fancy-fun-lab'],
+            'why' => 'Python twin of laravel-fun-lab, under the same owner approval as fancy-fun-lab-js and the same fun-lab/* fixture suites. Zero runtime deps; a store contract with in-memory and stdlib sqlite3 adapters. Design: .ai/plans/fun-lab-twins.md. PyPI name fancy-fun-lab and the variants fancyfunlab, fancy_fun_lab, funlab, fun-lab, fun_lab answered 404 on 2026-11-16; the form is the final authority. Bootstrap by pending publisher (owner) on an unprotected pypi environment (agent).',
+        ],
     ];
 
     /**

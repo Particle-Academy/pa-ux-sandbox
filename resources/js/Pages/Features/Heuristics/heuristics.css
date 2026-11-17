@@ -1,0 +1,50 @@
+/* /features/heuristics: a heatmap identity. The hero carries soft focus
+   blobs, the way the dashboard's attention heatmap paints a page. Scoped to
+   [data-feature="heuristics"], the attribute FeatureIdentity sets; colours
+   come from the --feature-* tokens, so dark mode is a token swap. */
+
+[data-feature="heuristics"] {
+  --heur-edge: color-mix(in oklch, var(--feature-accent) 28%, var(--border-1));
+}
+.dark [data-feature="heuristics"],
+[data-theme="dark"] [data-feature="heuristics"] {
+  --heur-edge: color-mix(in oklch, var(--feature-accent) 24%, var(--border-1));
+}
+
+[data-feature="heuristics"] .feature-hero {
+  background:
+    radial-gradient(22% 38% at 78% 30%, color-mix(in oklch, var(--feature-accent) 22%, transparent), transparent 70%),
+    radial-gradient(16% 30% at 62% 70%, color-mix(in oklch, var(--feature-accent) 14%, transparent), transparent 70%),
+    radial-gradient(30% 50% at 92% 80%, color-mix(in oklch, var(--feature-accent) 10%, transparent), transparent 70%),
+    var(--feature-surface);
+}
+
+.heur-tap { min-height: 44px; }
+.heur-anchor { scroll-margin-top: 88px; }
+
+.heur-pixels {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.heur-pixel { border-color: var(--heur-edge); }
+.heur-pixel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.heur-pixel__slot {
+  display: grid;
+  place-items: center;
+  min-height: 56px;
+  margin: 12px 0;
+}
+
+.heur-code {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.heur-note { border-color: var(--heur-edge); }

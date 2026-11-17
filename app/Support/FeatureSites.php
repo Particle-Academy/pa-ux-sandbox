@@ -208,6 +208,19 @@ final class FeatureSites
             'members' => ['family:fancy-compliance'],
             'bridges' => [],
         ],
+        // Interaction analytics as a capability (owner, 2026-11-16): the
+        // heuristics server and browser collector (one family, PHP + Node)
+        // and the pixel that embeds them on a site in one script tag.
+        'heuristics' => [
+            'course' => null,
+            'name' => 'Analytics & Heuristics',
+            'tagline' => 'Human and agent interaction analytics: one embed collects clicks, scroll, dwell and focus heatmaps, and a Laravel backend reports them, split by who acted.',
+            'icon' => 'activity',
+            'component' => 'Features/Heuristics/Index',
+            'theme' => ['accent' => '#db2777', 'accentDark' => '#f472b6', 'surface' => '#fdf2f8', 'surfaceDark' => '#1c0a14', 'font' => 'sans'],
+            'members' => ['family:fancy-heuristics', 'fancy-pixel'],
+            'bridges' => [],
+        ],
         // Every security-shaped capability in the kit, across packages. Only
         // published packages are members; the planned service tokens and
         // request guards (CC-fancy-0030, CC-fancy-0031) wait in

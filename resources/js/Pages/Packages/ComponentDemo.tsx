@@ -4158,7 +4158,9 @@ function PixelMount({ style }: { style: PixelStyle }) {
         if (!target) return;
         let pixel: PixelHandle | null = null;
         // placed/inline so it lives in the card; no `endpoint` => no beacon POST.
-        pixel = mountPixel({ style, mode: "placed", target, siteKey: "demo" });
+        // One key per style: fancy-pixel mounts one pixel per site key, so a
+        // shared "demo" key left the Mark and Beacon cards empty.
+        pixel = mountPixel({ style, mode: "placed", target, siteKey: `demo-${style}` });
         return () => pixel?.destroy();
     }, [style]);
     return <div ref={ref} className="grid min-h-9 place-items-center" />;

@@ -72,11 +72,11 @@ function connectorsSources(): array
 }
 
 it('is the last Feature in the menu', function () {
-    // Human+ (first) and Security joined on 2026-11-13, Media on 2026-11-14;
-    // Connectors stays last.
-    expect(FeatureSites::slugs())->toHaveCount(14)
-        ->and(array_key_last(FeatureSites::slugs()))->toBe(13)
-        ->and(FeatureSites::slugs()[13])->toBe('connectors')
+    // Human+ (first) and Security joined on 2026-11-13, Media on 2026-11-14,
+    // Analytics & Heuristics on 2026-11-17; Connectors stays last.
+    expect(FeatureSites::slugs())->toHaveCount(15)
+        ->and(array_key_last(FeatureSites::slugs()))->toBe(14)
+        ->and(FeatureSites::slugs()[14])->toBe('connectors')
         ->and(array_column(FeatureSites::nav(), 'slug'))->toContain('connectors');
 });
 

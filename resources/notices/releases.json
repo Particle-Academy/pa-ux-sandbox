@@ -21,6 +21,9 @@
         "fancy-catalog-js": "0.6.1",
         "fancy-catalog-py": "0.2.0",
         "fancy-cf-relay": "0.2.0",
+        "fancy-chat-js": "0.2.0",
+        "fancy-chat-php": "0.2.0",
+        "fancy-chat-ui": "0.2.0",
         "fancy-cli": "0.9.1",
         "fancy-cms": "0.9.1",
         "fancy-cms-ui": "0.14.1",
@@ -44,6 +47,8 @@
         "fancy-flow-php": "0.66.0",
         "fancy-flow-py": "0.30.1",
         "fancy-formula": "0.1.0",
+        "fancy-fun-lab-js": "0.1.0",
+        "fancy-fun-lab-py": "0.1.0",
         "fancy-fun-lab-ui": "0.2.0",
         "fancy-git": "0.4.1",
         "fancy-git-bitbucket-js": "0.2.0",
@@ -143,6 +148,38 @@
     },
     "releases": [
         {
+            "slug": "fancy-chat-ui",
+            "registry": "npm",
+            "version": "0.2.0",
+            "published_at": "2026-11-17T08:56:33Z",
+            "first": true,
+            "summary": "AgentComposer attachments?: boolean"
+        },
+        {
+            "slug": "fancy-chat-js",
+            "registry": "npm",
+            "version": "0.2.0",
+            "published_at": "2026-11-17T08:34:52Z",
+            "first": true,
+            "summary": "Docs: AGENTS.md is now the guide to using this package (install, how to find it on the Fancy MCP catalog server once it…"
+        },
+        {
+            "slug": "fancy-fun-lab-py",
+            "registry": "pypi",
+            "version": "0.1.0",
+            "published_at": "2026-11-17T08:25:03Z",
+            "first": true,
+            "summary": "The engine, to parity with laravel-fun-lab 0.8.0"
+        },
+        {
+            "slug": "fancy-fun-lab-js",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-17T08:23:35Z",
+            "first": true,
+            "summary": "The engine"
+        },
+        {
             "slug": "laravel-fun-lab",
             "registry": "composer",
             "version": "0.8.0",
@@ -181,6 +218,14 @@
             "published_at": "2026-11-16T17:55:58Z",
             "first": false,
             "summary": "PromptInput attachments"
+        },
+        {
+            "slug": "fancy-chat-php",
+            "registry": "composer",
+            "version": "0.2.0",
+            "published_at": "2026-11-16T16:56:35Z",
+            "first": false,
+            "summary": "Prism Harness is the backend, in this package"
         },
         {
             "slug": "prism-graph-ts",
@@ -253,6 +298,14 @@
             "published_at": "2026-11-16T05:34:20Z",
             "first": false,
             "summary": "add no longer reports files it just wrote as \"Skipped existing file(s)\""
+        },
+        {
+            "slug": "fancy-chat-php",
+            "registry": "composer",
+            "version": "0.1.0",
+            "published_at": "2026-11-16T05:30:59Z",
+            "first": true,
+            "summary": "ChatTurnSettled: (after commit, once per settled turn, succeeded()): the hook for a \"reply ready\" notification"
         },
         {
             "slug": "agent-integrations",

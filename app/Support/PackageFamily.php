@@ -201,6 +201,30 @@ final class PackageFamily
             ]],
         ],
         [
+            'slug' => 'fancy-chat',
+            'name' => 'Fancy Chat',
+            'tagline' => 'The agent chat framework, built on Prism Harness: a Laravel server that runs each turn on a Harness session and serves it as a resumable, append-only thread log, the isomorphic wire contract that log speaks, and React surfaces for the thread, the composer and human-in-the-loop approvals and questions. Graph, memory and browser extras are optional.',
+            'group' => 'platform',
+            'kind' => 'headless',
+            'sections' => [
+                [
+                    'label' => 'Server',
+                    'capability' => 'Agent chat threads on Prism Harness (SSE + long-poll, resumable replay, HITL decisions)',
+                    'members' => [['language' => 'PHP', 'slug' => 'fancy-chat-php']],
+                ],
+                [
+                    'label' => 'Wire contract',
+                    'capability' => null,
+                    'members' => [['language' => 'Node / TypeScript', 'slug' => 'fancy-chat-js']],
+                ],
+                [
+                    'label' => 'React UI',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'fancy-chat-ui']],
+                ],
+            ],
+        ],
+        [
             'slug' => 'fancy-compliance',
             'name' => 'Fancy Compliance',
             'tagline' => 'Consent as a drop-in capability: an append-only consent ledger and a server gate in Laravel, and a React banner, preferences dialog and script gating where refusing is exactly as easy as accepting.',

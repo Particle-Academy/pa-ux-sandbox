@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
 use Tests\TestCase;
 
@@ -15,38 +16,53 @@ uses(TestCase::class);
  * parts." So three packages, built on Prism Harness, and the two separate Prism
  * adapter packages are retired: fancy-chat-prism-php merged into fancy-chat-php
  * 0.2.0, fancy-chat-prism (never built) dropped.
+ *
+ * Published 2026-11-16: @particle-academy/fancy-chat-js 0.2.0 and
+ * @particle-academy/fancy-chat-ui 0.2.0 on npm, particle-academy/fancy-chat-php
+ * 0.2.0 on Packagist. They sat in PLANNED a day after that, so the site and the
+ * hosted MCP returned nothing for "fancy-chat". They are listed as companions:
+ * fancy-chat-ui ships no component pages here yet, so it lists as an install
+ * row, like fancy-captcha-ui.
  */
-dataset('fancy-chat-planned', [
-    ['fancy-chat-js', 'Particle-Academy/fancy-chat-js', 'npm', '@particle-academy/fancy-chat-js'],
-    ['fancy-chat-ui', 'Particle-Academy/fancy-chat-ui', 'npm', '@particle-academy/fancy-chat-ui'],
-    ['fancy-chat-php', 'Particle-Academy/fancy-chat-php', 'packagist', 'particle-academy/fancy-chat-php'],
+dataset('fancy-chat-published', [
+    ['fancy-chat-js', 'ts', 'headless', 'npm', '@particle-academy/fancy-chat-js'],
+    ['fancy-chat-ui', 'ts', 'ui', 'npm', '@particle-academy/fancy-chat-ui'],
+    ['fancy-chat-php', 'php', 'headless', 'composer', 'particle-academy/fancy-chat-php'],
 ]);
 
-it('registers the agent chat package as planned with its registry name', function (string $slug, string $repo, string $registry, string $name) {
-    expect(PackageRegistry::PLANNED)->toHaveKey($slug);
-    $entry = PackageRegistry::PLANNED[$slug];
-    expect($entry['name'])->toBe($name)
-        ->and($entry['repo'])->toBe($repo)
-        ->and($entry['registries'])->toBe([$registry => $name])
-        ->and($entry['why'])->toContain('CC-fancy-0042')
-        ->and($entry['why'])->toContain('.ai/plans/agent-chat-on-prism.md');
-})->with('fancy-chat-planned');
+it('lists the published agent chat package as built, classified and in its family', function (string $slug, string $ecosystem, string $kind, string $installKey, string $name) {
+    expect(PackageRegistry::PLANNED)->not->toHaveKey($slug);
 
-it('keeps the planned agent chat package off every public listing', function (string $slug) {
-    $public = collect(PackageRegistry::all())->merge(PackageRegistry::companions())->pluck('slug');
-    expect($public)->not->toContain($slug);
-    expect(PackageRegistry::find($slug))->toBeNull();
-    $this->get("/packages/{$slug}")->assertNotFound();
-})->with('fancy-chat-planned');
+    $package = collect(PackageRegistry::companions())->firstWhere('slug', $slug);
+    expect($package)->not->toBeNull()
+        ->and($package['name'])->toBe($name)
+        ->and($package[$installKey])->toBe($name)
+        ->and($package['repo'])->toBe('Particle-Academy/'.$slug)
+        ->and($package['group'])->toBe('platform')
+        ->and($package['ecosystem'])->toBe($ecosystem)
+        ->and($package['kind'])->toBe($kind)
+        ->and(PackageRegistry::isHidden($slug))->toBeFalse();
 
-it('describes the chat as built on Prism, never as provider-neutral', function (string $slug) {
-    $why = PackageRegistry::PLANNED[$slug]['why'];
-    expect($why)->toContain('Prism')
-        ->and($why)->not->toContain('No Prism')
-        ->and($why)->not->toContain('neutral');
-})->with('fancy-chat-planned');
+    expect(PackageFamily::groupFor($slug)['family'])->toBe('fancy-chat');
+})->with('fancy-chat-published');
+
+it('describes the chat as built on Prism Harness, never as provider-neutral', function (string $slug) {
+    $tagline = collect(PackageRegistry::companions())->firstWhere('slug', $slug)['tagline'];
+    expect($tagline)->toContain('Prism')
+        ->and($tagline)->not->toContain('No Prism')
+        ->and($tagline)->not->toContain('neutral');
+})->with('fancy-chat-published');
+
+it('lists the Packagist leg under its registry name', function () {
+    expect(collect(PackageRegistry::companions())->firstWhere('slug', 'fancy-chat-php')['packagist'])
+        ->toBe('particle-academy/fancy-chat-php');
+});
 
 it('no longer lists the retired Prism adapter packages', function () {
+    $public = collect(PackageRegistry::all())->merge(PackageRegistry::companions())->pluck('slug');
+
     expect(PackageRegistry::PLANNED)->not->toHaveKey('fancy-chat-prism')
-        ->and(PackageRegistry::PLANNED)->not->toHaveKey('fancy-chat-prism-php');
+        ->and(PackageRegistry::PLANNED)->not->toHaveKey('fancy-chat-prism-php')
+        ->and($public)->not->toContain('fancy-chat-prism')
+        ->and($public)->not->toContain('fancy-chat-prism-php');
 });

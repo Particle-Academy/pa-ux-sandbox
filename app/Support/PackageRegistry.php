@@ -368,30 +368,6 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-sign-pades'],
             'why' => 'Node twin of fancy-sign-pades (CC-fancy-0036 phases 2 and 3). Its CMS/TSP library (pkijs proposed) is an APPROVAL REQUEST in the plan, not a decision. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13.',
         ],
-        // CC-fancy-0042, the agent chat (owner approved 2026-11-15, q_975913cd).
-        // Built on the Prism ecosystem (owner, 2026-11-16): turns run on Prism
-        // Harness; only the extras (prism-graph, prism-memory, the browser) are
-        // optional. Three packages: fancy-chat-prism-php merged into
-        // fancy-chat-php 0.2.0, and fancy-chat-prism was retired unbuilt.
-        // Design: .ai/plans/agent-chat-on-prism.md.
-        'fancy-chat-js' => [
-            'name' => '@particle-academy/fancy-chat-js',
-            'repo' => 'Particle-Academy/fancy-chat-js',
-            'registries' => ['npm' => '@particle-academy/fancy-chat-js'],
-            'why' => 'The agent chat wire contract (CC-fancy-0042), built on Prism: the thread log a server projects Prism Harness runs into, and the one contract every server implements (fancy-chat-php now, a Node twin on prism-harness and prism-acp next). v1 run/turn/message/HITL events with gapless per-thread seq and resumable replay, typed message parts with a registry, the turn-state machine, delivery states, HITL records, the agent status vocabulary and the projection, held to the PHP server by shared conformance fixtures. Zero runtime deps and isomorphic, because the UI reads it in the browser. Design: .ai/plans/agent-chat-on-prism.md. npm name not yet claimed (the owner claims it).',
-        ],
-        'fancy-chat-ui' => [
-            'name' => '@particle-academy/fancy-chat-ui',
-            'repo' => 'Particle-Academy/fancy-chat-ui',
-            'registries' => ['npm' => '@particle-academy/fancy-chat-ui'],
-            'why' => 'React surfaces for the agent chat on Prism (CC-fancy-0042), composed from react-fancy (ContentRenderer, PromptInput with attachments, VirtualList, ChatThread pieces), fancy-echarts and fancy-code: useAgentThread, AgentThread, AgentComposer, activity rows, ApprovalCard, QuestionForm and the rest of the HITL set, all controlled with stable handles. Its agent-integrations bridge has NO decide or answer tool. ./knowledge is an optional entry on prism-graph types. Design: .ai/plans/agent-chat-on-prism.md. npm name not yet claimed (the owner claims it).',
-        ],
-        'fancy-chat-php' => [
-            'name' => 'particle-academy/fancy-chat-php',
-            'repo' => 'Particle-Academy/fancy-chat-php',
-            'registries' => ['packagist' => 'particle-academy/fancy-chat-php'],
-            'why' => 'Laravel agent chat on Prism Harness (CC-fancy-0042): HarnessBackend runs each turn on a Harness session (RunStep g282.1, streamed approvals, host-resolved attachments), served as an append-only thread log with atomic seq, SSE plus long-poll with resumable replay, decision endpoints that accept human actors only, the turn machine, staged writes and typed approval, passing the same fixtures as fancy-chat-js. Optional KnowledgeBridge on prism-graph. Absorbed fancy-chat-prism-php in 0.2.0. Design: .ai/plans/agent-chat-on-prism.md.',
-        ],
     ];
 
     /**
@@ -567,6 +543,11 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-passkeys-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0891b2'],
         'fancy-cowork' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0d9488'],
         'fancy-cowork-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0d9488'],
+        // Agent chat on Prism Harness (CC-fancy-0042) — a Laravel server, the
+        // isomorphic wire contract it speaks, and the React surfaces.
+        'fancy-chat-php' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#c026d3'],
+        'fancy-chat-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#c026d3'],
+        'fancy-chat-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#c026d3'],
         // Education — courses, certification, and the authoring agent. A META
         // entry is not optional: a slug missing from here falls through to the
         // fallback bucket and silently reads as a second-class "companion".
@@ -957,6 +938,39 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'repo' => 'Particle-Academy/fancy-cowork-js',
                 'language' => 'TypeScript',
                 'pairs' => ['agent-integrations'],
+            ],
+            // Agent chat on Prism Harness (CC-fancy-0042). Published 2026-11-16
+            // and listed here the day after; fancy-chat-prism-php was merged
+            // into fancy-chat-php 0.2.0 and is abandoned. fancy-chat-ui has no
+            // component pages yet, so it lists as an install row, like
+            // fancy-captcha-ui.
+            [
+                'slug' => 'fancy-chat-php',
+                'name' => 'particle-academy/fancy-chat-php',
+                'tagline' => 'Agent chat for Laravel, built on Prism Harness: every turn runs on a Harness session (streamed approvals, host-resolved attachments) and is served as an append-only thread log with an atomic, gapless seq, over SSE with a long-poll fallback and resumable replay. The turn machine, staged writes, typed approvals and decision endpoints that accept human actors only. Optional knowledge explorer on prism-graph. Speaks the @particle-academy/fancy-chat-js contract, held to it by shared fixtures; pairs with @particle-academy/fancy-chat-ui.',
+                'composer' => 'particle-academy/fancy-chat-php',
+                'repo' => 'Particle-Academy/fancy-chat-php',
+                'packagist' => 'particle-academy/fancy-chat-php',
+                'language' => 'PHP',
+                'pairs' => ['fancy-chat-js', 'fancy-chat-ui'],
+            ],
+            [
+                'slug' => 'fancy-chat-js',
+                'name' => '@particle-academy/fancy-chat-js',
+                'tagline' => 'The agent chat wire contract: the thread log fancy-chat-php projects Prism Harness runs into. Run, turn, message and human-in-the-loop events with a gapless per-thread seq and resumable replay, typed message parts, the turn-state machine, delivery states, the agent status vocabulary and a pure thread projection. Zero runtime dependencies and isomorphic, so the UI reads it in the browser. Held to particle-academy/fancy-chat-php by shared conformance fixtures.',
+                'npm' => '@particle-academy/fancy-chat-js',
+                'repo' => 'Particle-Academy/fancy-chat-js',
+                'language' => 'TypeScript',
+                'pairs' => ['fancy-chat-php', 'fancy-chat-ui'],
+            ],
+            [
+                'slug' => 'fancy-chat-ui',
+                'name' => '@particle-academy/fancy-chat-ui',
+                'tagline' => 'React agent chat surfaces on Prism, built from react-fancy: useAgentThread (resumable SSE with a long-poll fallback over the fancy-chat-js thread log), AgentThread, AgentComposer with attachments, activity rows, and the human-in-the-loop set (ApprovalCard, QuestionForm). Controlled, with stable data-fancy-chat-* handles; decisions stay with the human. Optional charts on fancy-echarts and a knowledge explorer on prism-graph. Pairs with particle-academy/fancy-chat-php.',
+                'npm' => '@particle-academy/fancy-chat-ui',
+                'repo' => 'Particle-Academy/fancy-chat-ui',
+                'language' => 'TypeScript',
+                'pairs' => ['fancy-chat-php', 'fancy-chat-js'],
             ],
             [
                 'slug' => 'fancy-git',

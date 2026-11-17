@@ -31,7 +31,7 @@ class McpUsageRecorder
     ) {}
 
     /**
-     * @return array{at: string, session_id: string|null, http_status: int, latency_ms: int, ip_hash: string|null, ua_family: string, protocol_version: string|null, rows: list<array<string, mixed>>}|null
+     * @return array{at: string, session_id: string|null, http_status: int, latency_ms: int, ip_hash: string|null, ua_family: string, protocol_version: string|null, location?: array{country: string|null, city: string|null, latitude: float|null, longitude: float|null}, rows: list<array<string, mixed>>}|null
      */
     public function capture(Request $request, Response $response, int $latencyMs): ?array
     {
@@ -61,12 +61,15 @@ class McpUsageRecorder
             'ip_hash' => $this->ipHasher->hash($request->ip(), $at),
             'ua_family' => $this->userAgents->of($request->userAgent()),
             'protocol_version' => is_string($protocol) && $protocol !== '' ? Str::limit($protocol, 20, '') : null,
+            // Coarse (country, city, 1-decimal coordinates) and read from
+            // Cloudflare's headers here, so no IP is needed to place it later.
+            'location' => VisitorLocation::fromRequest($request),
             'rows' => $rows,
         ];
     }
 
     /**
-     * @param  array{at: string, session_id: string|null, http_status: int, latency_ms: int, ip_hash: string|null, ua_family: string, protocol_version: string|null, rows: list<array<string, mixed>>}  $payload
+     * @param  array{at: string, session_id: string|null, http_status: int, latency_ms: int, ip_hash: string|null, ua_family: string, protocol_version: string|null, location?: array{country: string|null, city: string|null, latitude: float|null, longitude: float|null}, rows: list<array<string, mixed>>}  $payload
      */
     public function store(array $payload): void
     {
@@ -99,6 +102,10 @@ class McpUsageRecorder
                 'protocol_version' => $row['protocol_version'] ?? $payload['protocol_version'] ?? $session?->protocol_version,
                 'ua_family' => $payload['ua_family'],
                 'ip_hash' => $payload['ip_hash'],
+                'country' => $payload['location']['country'] ?? null,
+                'city' => $payload['location']['city'] ?? null,
+                'latitude' => $payload['location']['latitude'] ?? null,
+                'longitude' => $payload['location']['longitude'] ?? null,
                 'created_at' => $at,
             ]);
         }

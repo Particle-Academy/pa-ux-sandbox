@@ -21,7 +21,7 @@ class RecordMcpRequest implements ShouldQueue
     public int $tries = 1;
 
     /**
-     * @param  array{at: string, session_id: string|null, http_status: int, latency_ms: int, ip_hash: string|null, ua_family: string, protocol_version: string|null, rows: list<array<string, mixed>>}  $payload
+     * @param  array{at: string, session_id: string|null, http_status: int, latency_ms: int, ip_hash: string|null, ua_family: string, protocol_version: string|null, location?: array{country: string|null, city: string|null, latitude: float|null, longitude: float|null}, rows: list<array<string, mixed>>}  $payload
      */
     public function __construct(public array $payload) {}
 

@@ -39,6 +39,8 @@ export type CallRow = {
     client_key: string;
     client_version: string | null;
     offset_ms?: number;
+    country?: string | null;
+    city?: string | null;
 };
 
 export type SessionRow = {
@@ -90,6 +92,7 @@ export function McpTabs({ range }: { range: Range }) {
     const path = url.replace(/\?.*$/, "");
     const tabs = [
         { label: "Overview", href: "/admin/mcp", icon: "layout-dashboard", active: path === "/admin/mcp" },
+        { label: "Live", href: "/admin/mcp/live", icon: "radio", active: path.startsWith("/admin/mcp/live") },
         { label: "Errors", href: "/admin/mcp/errors", icon: "circle-alert", active: path.startsWith("/admin/mcp/errors") },
         { label: "Search demand", href: "/admin/mcp/search-demand", icon: "search", active: path.startsWith("/admin/mcp/search-demand") },
     ];
@@ -261,7 +264,22 @@ export function RankChart({ rows, color = "#8b5cf6", height }: { rows: { label: 
 }
 
 /** A table of calls (used by a session timeline, a tool's errors and the error drill-down). */
-export function CallsTable({ rows, range, showSession = true, showOffset = false }: { rows: CallRow[]; range: Range; showSession?: boolean; showOffset?: boolean }) {
+export function CallsTable({
+    rows,
+    range,
+    showSession = true,
+    showOffset = false,
+    showPlace = false,
+    fresh,
+}: {
+    rows: CallRow[];
+    range: Range;
+    showSession?: boolean;
+    showOffset?: boolean;
+    showPlace?: boolean;
+    /** Row ids that just arrived, highlighted (the Live page). */
+    fresh?: Set<number>;
+}) {
     return (
         <div className="admin-table-wrap">
             <Table>
@@ -274,11 +292,18 @@ export function CallsTable({ rows, range, showSession = true, showOffset = false
                         <Table.Cell header>Result</Table.Cell>
                         <Table.Cell header>Latency</Table.Cell>
                         {showSession && <Table.Cell header>Client · session</Table.Cell>}
+                        {showPlace && <Table.Cell header>Place</Table.Cell>}
                     </Table.Row>
                 </Table.Head>
                 <Table.Body>
                     {rows.map((r) => (
-                        <Table.Row key={r.id} data-mcp-call={r.id} data-mcp-status={r.status}>
+                        <Table.Row
+                            key={r.id}
+                            data-mcp-call={r.id}
+                            data-mcp-status={r.status}
+                            data-mcp-fresh={fresh?.has(r.id) ? "true" : undefined}
+                            style={fresh?.has(r.id) ? { background: "var(--violet-50, rgba(139, 92, 246, 0.08))" } : undefined}
+                        >
                             <Table.Cell>
                                 <span style={{ fontSize: 12, color: "var(--fg-3)", whiteSpace: "nowrap" }}>{showOffset ? n(r.offset_ms ?? 0) : when(r.at)}</span>
                             </Table.Cell>
@@ -310,6 +335,18 @@ export function CallsTable({ rows, range, showSession = true, showOffset = false
                                             </Link>
                                         )}
                                     </div>
+                                </Table.Cell>
+                            )}
+                            {showPlace && (
+                                <Table.Cell>
+                                    {r.country ? (
+                                        <Link href={withRange(`/admin/mcp/countries/${r.country}`, range)} style={{ fontSize: 12, whiteSpace: "nowrap" }}>
+                                            {r.city ? `${r.city}, ` : ""}
+                                            {r.country}
+                                        </Link>
+                                    ) : (
+                                        <span style={{ color: "var(--fg-4)" }}>—</span>
+                                    )}
                                 </Table.Cell>
                             )}
                         </Table.Row>

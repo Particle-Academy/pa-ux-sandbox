@@ -210,6 +210,53 @@ return [
         'demand' => (int) env('MCP_STATS_DEMAND', 100),
     ],
 
+    'live' => [
+        /*
+         * How often the Live page polls its feed, in milliseconds.
+         */
+        'poll_ms' => (int) env('MCP_STATS_LIVE_POLL_MS', 4000),
+
+        /*
+         * The most rows one feed response returns and the page keeps. A
+         * request may ask for fewer, never more.
+         */
+        'row_cap' => (int) env('MCP_STATS_LIVE_ROW_CAP', 50),
+
+        /*
+         * The window the live counters cover, in minutes.
+         */
+        'window_minutes' => (int) env('MCP_STATS_LIVE_WINDOW_MINUTES', 15),
+
+        /*
+         * The window the map's clustered layer covers, in hours, and the most
+         * clusters it returns (busiest first).
+         */
+        'map_hours' => (int) env('MCP_STATS_LIVE_MAP_HOURS', 24),
+        'map_limit' => (int) env('MCP_STATS_LIVE_MAP_LIMIT', 500),
+
+        /*
+         * How long a new request's ping pulses on the map, in milliseconds.
+         */
+        'ping_ms' => (int) env('MCP_STATS_LIVE_PING_MS', 12000),
+    ],
+
+    'geo' => [
+        /*
+         * Read Cloudflare's visitor-location request headers (CF-IPCountry,
+         * cf-ipcity, cf-iplatitude, cf-iplongitude) at record time. They
+         * exist only when the site is proxied through Cloudflare (orange
+         * cloud); CF-IPCountry also needs Network > IP Geolocation on, and
+         * the city and coordinates need the Managed Transform "Add visitor
+         * location headers".
+         *
+         * Off-Cloudflare, a client could send these headers itself. Every
+         * value is validated (two-letter code, numeric coordinates in range,
+         * bounded city), so the worst a forger gets is a wrong point on an
+         * admin-only map. Turn this off if the origin is reachable directly.
+         */
+        'cloudflare_headers' => (bool) env('MCP_STATS_CLOUDFLARE_GEO', true),
+    ],
+
     /*
      * User-agent families, checked in order: the first whose pattern
      * (case-insensitive regex) matches names the family. Anything else is

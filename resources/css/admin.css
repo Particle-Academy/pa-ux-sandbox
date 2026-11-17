@@ -128,3 +128,30 @@
 
 /* admin tables: keep react-fancy Table on-brand inside cards */
 .admin-table-wrap { overflow-x: auto; }
+
+/* MCP Live map (/admin/mcp/live). fancy-map renders each pin as
+   .fancy-map-pin[data-map-marker-id]; a new request's pin has an id starting
+   "ping-" and gets a pulsing ring. The ring is a pseudo-element on the inner
+   pin, so it never fights the transform Leaflet positions the marker with. */
+.mcp-live-map .fancy-map-pin[data-map-marker-id^="ping-"] {
+    position: relative;
+}
+.mcp-live-map .fancy-map-pin[data-map-marker-id^="ping-"]::after {
+    content: "";
+    position: absolute;
+    inset: -7px;
+    border-radius: 999px;
+    border: 2px solid var(--fancy-map-pin, #ef4444);
+    pointer-events: none;
+    animation: mcp-live-ping 1.4s ease-out infinite;
+}
+@keyframes mcp-live-ping {
+    from { transform: scale(0.6); opacity: 0.9; }
+    to { transform: scale(1.9); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mcp-live-map .fancy-map-pin[data-map-marker-id^="ping-"]::after {
+        animation: none;
+        opacity: 0.6;
+    }
+}

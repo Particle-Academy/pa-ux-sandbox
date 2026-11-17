@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\McpLiveFeedRequest;
 use App\Http\Requests\McpStatsRangeRequest;
 use App\Models\McpRequest;
 use App\Models\McpSession;
 use App\Models\ShowcaseSubmission;
+use App\Support\McpStats\McpLiveFeed;
 use App\Support\McpStats\McpStatsReport;
 use App\Support\McpStats\StatsRange;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -79,6 +82,34 @@ class AdminMcpController extends Controller
             'filters' => $filters,
             'calls' => $this->report->errorCalls($range, $filters),
         ] + $this->shared($range));
+    }
+
+    /**
+     * The Live page. It renders empty and fills itself by polling the feed,
+     * so the poll interval and row cap travel with it from config.
+     */
+    public function live(McpStatsRangeRequest $request, McpLiveFeed $feed): Response
+    {
+        return Inertia::render('Admin/Mcp/Live', [
+            'feedUrl' => route('admin.mcp.live.feed', absolute: false),
+            'pollMs' => max(1000, (int) config('mcp-stats.live.poll_ms', 4000)),
+            'rowCap' => $feed->rowCap(),
+            'pingMs' => max(1000, (int) config('mcp-stats.live.ping_ms', 12000)),
+        ] + $this->shared($request->range()));
+    }
+
+    /** Newest raw requests after `since`, plus live counters and the map. */
+    public function liveFeed(McpLiveFeedRequest $request, McpLiveFeed $feed): JsonResponse
+    {
+        return response()->json($feed->feed($request->since(), $request->limit($feed->rowCap())));
+    }
+
+    /** One country's requests in the range. */
+    public function country(McpStatsRangeRequest $request, McpLiveFeed $feed, string $country): Response
+    {
+        $range = $request->range();
+
+        return Inertia::render('Admin/Mcp/Country', $feed->country($range, strtoupper($country)) + $this->shared($range));
     }
 
     public function searchDemand(McpStatsRangeRequest $request): Response

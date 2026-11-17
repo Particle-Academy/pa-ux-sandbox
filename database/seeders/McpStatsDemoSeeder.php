@@ -38,6 +38,29 @@ class McpStatsDemoSeeder extends Seeder
 
     private const SLUGS_MISS = ['gantt', 'org-chart', 'signature-pad'];
 
+    /**
+     * Where demo sessions come from, as Cloudflare would report it: most with
+     * a city and 1-decimal coordinates, some with only a country, one with
+     * nothing (no Cloudflare in front).
+     *
+     * @var list<array{country: string|null, city: string|null, latitude: float|null, longitude: float|null}>
+     */
+    private const PLACES = [
+        ['country' => 'US', 'city' => 'San Francisco', 'latitude' => 37.8, 'longitude' => -122.4],
+        ['country' => 'US', 'city' => 'New York', 'latitude' => 40.7, 'longitude' => -74.0],
+        ['country' => 'US', 'city' => 'Austin', 'latitude' => 30.3, 'longitude' => -97.7],
+        ['country' => 'GB', 'city' => 'London', 'latitude' => 51.5, 'longitude' => -0.1],
+        ['country' => 'DE', 'city' => 'Berlin', 'latitude' => 52.5, 'longitude' => 13.4],
+        ['country' => 'IN', 'city' => 'Bengaluru', 'latitude' => 13.0, 'longitude' => 77.6],
+        ['country' => 'JP', 'city' => 'Tokyo', 'latitude' => 35.7, 'longitude' => 139.7],
+        ['country' => 'BR', 'city' => 'São Paulo', 'latitude' => -23.6, 'longitude' => -46.6],
+        ['country' => 'AU', 'city' => 'Sydney', 'latitude' => -33.9, 'longitude' => 151.2],
+        ['country' => 'FR', 'city' => null, 'latitude' => null, 'longitude' => null],
+        ['country' => 'CA', 'city' => null, 'latitude' => null, 'longitude' => null],
+        ['country' => 'NG', 'city' => null, 'latitude' => null, 'longitude' => null],
+        ['country' => null, 'city' => null, 'latitude' => null, 'longitude' => null],
+    ];
+
     public function run(): void
     {
         if (app()->isProduction()) {
@@ -91,7 +114,7 @@ class McpStatsDemoSeeder extends Seeder
             'protocol_version' => '2025-06-18',
             'ua_family' => $client === 'vscode' ? 'node' : $client,
             'ip_hash' => $ip,
-        ];
+        ] + self::PLACES[mt_rand(0, count(self::PLACES) - 1)];
 
         $rows = [['method' => 'initialize', 'latency_ms' => mt_rand(3, 15)], ['method' => 'tools/list', 'result_count' => 19, 'latency_ms' => mt_rand(4, 20)]];
 

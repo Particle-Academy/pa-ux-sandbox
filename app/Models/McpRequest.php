@@ -54,6 +54,10 @@ class McpRequest extends Model
         'protocol_version',
         'ua_family',
         'ip_hash',
+        'country',
+        'city',
+        'latitude',
+        'longitude',
         'created_at',
     ];
 
@@ -65,6 +69,8 @@ class McpRequest extends Model
             'result_count' => 'integer',
             'latency_ms' => 'integer',
             'http_status' => 'integer',
+            'latitude' => 'float',
+            'longitude' => 'float',
             'created_at' => 'datetime',
         ];
     }

@@ -550,6 +550,10 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::get('mcp/errors', [AdminMcpController::class, 'errors'])->name('mcp.errors.index');
     Route::get('mcp/errors/calls', [AdminMcpController::class, 'errorCalls'])->name('mcp.errors.calls');
     Route::get('mcp/search-demand', [AdminMcpController::class, 'searchDemand'])->name('mcp.search-demand');
+    // Live: raw rows only, polled by the page; the feed is bounded by a row cap + id cursor.
+    Route::get('mcp/live', [AdminMcpController::class, 'live'])->name('mcp.live');
+    Route::get('mcp/live/feed', [AdminMcpController::class, 'liveFeed'])->name('mcp.live.feed');
+    Route::get('mcp/countries/{country}', [AdminMcpController::class, 'country'])->where('country', '[A-Za-z][A-Za-z0-9]')->name('mcp.countries.show');
 
     // App settings — admin-editable config (e.g. the tracker/pixel snippet).
     Route::get('settings', [AdminSettingsController::class, 'index'])->name('settings.index');

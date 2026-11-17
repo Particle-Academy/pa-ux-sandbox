@@ -29,6 +29,43 @@ class McpRollup
         $date = $day->toDateString();
         $this->backfillClients($date);
 
+        $aggregate = $this->aggregate($date);
+        $now = now();
+
+        DB::transaction(function () use ($date, $aggregate, $now): void {
+            McpDailyRollup::query()->where('day', $date)->delete();
+            McpDailyClient::query()->where('day', $date)->delete();
+            McpDailyArgValue::query()->where('day', $date)->delete();
+
+            $rows = array_map(fn (array $r): array => ['latency_histogram' => json_encode($r['latency_histogram']), 'rolled_at' => $now] + $r, $aggregate['rollups']);
+            foreach (array_chunk($rows, 500) as $batch) {
+                McpDailyRollup::query()->insert($batch);
+            }
+            foreach (array_chunk($aggregate['clients'], 500) as $batch) {
+                McpDailyClient::query()->insert($batch);
+            }
+            foreach (array_chunk($aggregate['values'], 500) as $batch) {
+                McpDailyArgValue::query()->insert($batch);
+            }
+        });
+
+        return [
+            'requests' => $aggregate['requests'],
+            'rollups' => count($aggregate['rollups']),
+            'clients' => count($aggregate['clients']),
+            'values' => count($aggregate['values']),
+        ];
+    }
+
+    /**
+     * One day of raw requests, aggregated into the three rollup shapes, with
+     * no writes. `rollDay()` persists it; the report calls it directly for
+     * TODAY, so the dashboard is current before the scheduled rollup runs.
+     *
+     * @return array{requests: int, rollups: list<array<string, mixed>>, clients: list<array<string, mixed>>, values: list<array<string, mixed>>}
+     */
+    public function aggregate(string $date): array
+    {
         $rollups = [];
         $clients = [];
         $values = [];
@@ -105,14 +142,9 @@ class McpRollup
                 }
             });
 
-        $now = now();
-
-        DB::transaction(function () use ($date, $rollups, $clients, $values, $now): void {
-            McpDailyRollup::query()->where('day', $date)->delete();
-            McpDailyClient::query()->where('day', $date)->delete();
-            McpDailyArgValue::query()->where('day', $date)->delete();
-
-            $rows = array_map(fn (array $r): array => [
+        return [
+            'requests' => $total,
+            'rollups' => array_map(fn (array $r): array => [
                 'day' => $date,
                 'method' => $r['method'],
                 'target' => $r['target'],
@@ -124,32 +156,18 @@ class McpRollup
                 'empty_results' => $r['empty_results'],
                 'latency_sum' => $r['latency_sum'],
                 'latency_max' => $r['latency_max'],
-                'latency_histogram' => json_encode($r['histogram']->toArray()),
-                'rolled_at' => $now,
-            ], array_values($rollups));
-            foreach (array_chunk($rows, 500) as $batch) {
-                McpDailyRollup::query()->insert($batch);
-            }
-
-            $rows = array_map(fn (array $c): array => [
+                'latency_histogram' => $r['histogram']->toArray(),
+            ], array_values($rollups)),
+            'clients' => array_map(fn (array $c): array => [
                 'day' => $date,
                 'client_name' => $c['client_name'],
                 'client_version' => $c['client_version'],
                 'sessions' => count($c['sessions']),
                 'requests' => $c['requests'],
                 'errors' => $c['errors'],
-            ], array_values($clients));
-            foreach (array_chunk($rows, 500) as $batch) {
-                McpDailyClient::query()->insert($batch);
-            }
-
-            $rows = array_map(fn (array $v): array => ['day' => $date] + $v, array_values($values));
-            foreach (array_chunk($rows, 500) as $batch) {
-                McpDailyArgValue::query()->insert($batch);
-            }
-        });
-
-        return ['requests' => $total, 'rollups' => count($rollups), 'clients' => count($clients), 'values' => count($values)];
+            ], array_values($clients)),
+            'values' => array_map(fn (array $v): array => ['day' => $date] + $v, array_values($values)),
+        ];
     }
 
     /**

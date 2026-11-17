@@ -24,11 +24,16 @@ class McpStatsReport
     /** Shown for a client that never sent clientInfo; also its URL key. */
     public const UNKNOWN_CLIENT = '-';
 
+    /** @var array{requests: int, rollups: list<array<string, mixed>>, clients: list<array<string, mixed>>, values: list<array<string, mixed>>}|null */
+    private ?array $today = null;
+
+    public function __construct(private readonly McpRollup $rollup) {}
+
     /** @return array<string, mixed> */
     public function overview(StatsRange $range): array
     {
-        $rows = $this->rollups($range)->get();
-        $clients = $this->dailyClients($range)->get();
+        $rows = $this->rollupRows($range);
+        $clients = $this->clientRows($range);
         $histogram = $this->histogram($rows);
 
         $requests = (int) $rows->sum('requests');
@@ -86,17 +91,12 @@ class McpStatsReport
     /** @return array<string, mixed> */
     public function tool(StatsRange $range, string $tool): array
     {
-        $rows = $this->rollups($range)->where('method', 'tools/call')->where('target', $tool)->get();
+        $rows = $this->rollupRows($range, ['method' => 'tools/call', 'target' => $tool]);
         $histogram = $this->histogram($rows);
         $calls = (int) $rows->sum('requests');
         $errors = (int) $rows->filter(fn (McpDailyRollup $r): bool => $this->isError($r->status))->sum('requests');
 
-        $values = McpDailyArgValue::query()
-            ->whereBetween('day', [$range->fromDay(), $range->toDay()])
-            ->where('target', $tool)
-            ->selectRaw('arg_key, arg_value, SUM(calls) as calls, SUM(empty_results) as empty, SUM(errors) as errors, MAX(day) as last_day')
-            ->groupBy('arg_key', 'arg_value')
-            ->get();
+        $values = $this->sumValues($this->argValueRows($range, null, $tool), ['arg_key', 'arg_value']);
 
         $argValues = $values->groupBy('arg_key')
             ->map(fn (Collection $group, int|string $key): array => [
@@ -173,11 +173,7 @@ class McpStatsReport
     public function client(StatsRange $range, string $key, ?string $version): array
     {
         $name = $this->clientName($key);
-        $rollups = $this->rollups($range)->where('client_name', $name);
-        if ($version !== null) {
-            $rollups->where('client_version', $version);
-        }
-        $rows = $rollups->get();
+        $rows = $this->rollupRows($range, ['client_name' => $name] + ($version !== null ? ['client_version' => $version] : []));
         $requests = (int) $rows->sum('requests');
         $errors = (int) $rows->filter(fn (McpDailyRollup $r): bool => $this->isError($r->status))->sum('requests');
 
@@ -206,17 +202,16 @@ class McpStatsReport
                 'sessions' => (clone $sessions)->count(),
                 'toolCalls' => (int) $rows->where('method', 'tools/call')->sum('requests'),
             ],
-            'versions' => $this->dailyClients($range)->where('client_name', $name)
-                ->selectRaw('client_version, SUM(sessions) as sessions, SUM(requests) as requests, SUM(errors) as errors')
+            'versions' => $this->clientRows($range, ['client_name' => $name])
                 ->groupBy('client_version')
-                ->orderByDesc('requests')
-                ->get()
-                ->map(fn ($v): array => [
-                    'version' => (string) $v->client_version,
-                    'sessions' => (int) $v->sessions,
-                    'requests' => (int) $v->requests,
-                    'errors' => (int) $v->errors,
+                ->map(fn (Collection $group, int|string $version): array => [
+                    'version' => (string) $version,
+                    'sessions' => (int) $group->sum('sessions'),
+                    'requests' => (int) $group->sum('requests'),
+                    'errors' => (int) $group->sum('errors'),
                 ])
+                ->sortByDesc('requests')
+                ->values()
                 ->all(),
             'series' => $series,
             'toolMix' => $rows->where('method', 'tools/call')->groupBy('target')
@@ -253,7 +248,7 @@ class McpStatsReport
     /** @return array<string, mixed> */
     public function errors(StatsRange $range): array
     {
-        $rows = $this->rollups($range)->whereIn('status', McpRequest::ERROR_STATUSES)->get();
+        $rows = $this->rollupRows($range, ['status' => McpRequest::ERROR_STATUSES]);
 
         $series = [];
         $byDay = $rows->groupBy('day');
@@ -305,33 +300,25 @@ class McpStatsReport
     {
         $limit = max(1, (int) config('mcp-stats.dashboard.demand', 100));
 
-        $empty = $this->argValuesFor($range, (array) config('mcp-stats.search_tools', []))
-            ->where('empty_results', '>', 0)
-            ->selectRaw('target, arg_value, SUM(empty_results) as misses, SUM(calls) as calls, MAX(day) as last_day')
-            ->groupBy('target', 'arg_value')
-            ->orderByDesc('misses')->orderBy('arg_value')
-            ->limit($limit)
-            ->get();
-
-        $missing = $this->argValuesFor($range, (array) config('mcp-stats.lookup_tools', []))
-            ->where('errors', '>', 0)
-            ->selectRaw('target, arg_value, SUM(errors) as misses, SUM(calls) as calls, MAX(day) as last_day')
-            ->groupBy('target', 'arg_value')
-            ->orderByDesc('misses')->orderBy('arg_value')
-            ->limit($limit)
-            ->get();
-
-        $shape = fn ($row): array => [
-            'tool' => $row->target,
-            'value' => $row->arg_value,
-            'misses' => (int) $row->misses,
-            'calls' => (int) $row->calls,
-            'lastDay' => (string) $row->last_day,
-        ];
+        $demand = function (array $toolArgs, string $missColumn) use ($range, $limit): array {
+            return $this->sumValues($this->argValueRows($range, $toolArgs), ['target', 'arg_value'])
+                ->filter(fn (object $row): bool => $row->{$missColumn} > 0)
+                ->sort(fn (object $a, object $b): int => [$b->{$missColumn}, $a->arg_value] <=> [$a->{$missColumn}, $b->arg_value])
+                ->take($limit)
+                ->map(fn (object $row): array => [
+                    'tool' => $row->target,
+                    'value' => $row->arg_value,
+                    'misses' => $row->{$missColumn},
+                    'calls' => $row->calls,
+                    'lastDay' => $row->last_day,
+                ])
+                ->values()
+                ->all();
+        };
 
         return [
-            'emptySearches' => $empty->map($shape)->all(),
-            'missingLookups' => $missing->map($shape)->all(),
+            'emptySearches' => $demand((array) config('mcp-stats.search_tools', []), 'empty'),
+            'missingLookups' => $demand((array) config('mcp-stats.lookup_tools', []), 'errors'),
             'searchTools' => array_keys((array) config('mcp-stats.search_tools', [])),
             'lookupTools' => array_keys((array) config('mcp-stats.lookup_tools', [])),
         ];
@@ -343,33 +330,130 @@ class McpStatsReport
     }
 
     /**
-     * @param  array<string, string>  $toolArgs  tool name => the argument that names what was asked for
-     * @return Builder<McpDailyArgValue>
+     * Argument-value rows summed over days, grouped by the given columns.
+     *
+     * @param  Collection<int, McpDailyArgValue>  $rows
+     * @param  list<string>  $by
+     * @return Collection<int, object{target: string, arg_key: string, arg_value: string, calls: int, empty: int, errors: int, last_day: string}>
      */
-    private function argValuesFor(StatsRange $range, array $toolArgs): Builder
+    private function sumValues(Collection $rows, array $by): Collection
     {
-        return McpDailyArgValue::query()
-            ->whereBetween('day', [$range->fromDay(), $range->toDay()])
-            ->where(function (Builder $q) use ($toolArgs): void {
-                if ($toolArgs === []) {
-                    $q->whereRaw('1 = 0');
-                }
-                foreach ($toolArgs as $tool => $arg) {
-                    $q->orWhere(fn (Builder $w) => $w->where('target', $tool)->where('arg_key', $arg));
+        return $rows
+            ->groupBy(fn (McpDailyArgValue $v): string => implode("\x1f", array_map(fn (string $c): string => (string) $v->{$c}, $by)))
+            ->map(fn (Collection $group): object => (object) [
+                'target' => $group->first()->target,
+                'arg_key' => $group->first()->arg_key,
+                'arg_value' => $group->first()->arg_value,
+                'calls' => (int) $group->sum('calls'),
+                'empty' => (int) $group->sum('empty_results'),
+                'errors' => (int) $group->sum('errors'),
+                'last_day' => (string) $group->max('day'),
+            ])
+            ->values();
+    }
+
+    /**
+     * Rollup rows for the range, filtered by exact column values (a list
+     * means "in"). Days before today come from `mcp_daily_rollups`; TODAY is
+     * aggregated from raw rows on the spot, so the dashboard is current
+     * before the scheduled rollup runs and never counts today twice.
+     *
+     * @param  array<string, string|int|list<string>>  $where
+     * @return Collection<int, McpDailyRollup>
+     */
+    private function rollupRows(StatsRange $range, array $where = []): Collection
+    {
+        return $this->merged($range, McpDailyRollup::query(), 'rollups', McpDailyRollup::class, $where);
+    }
+
+    /**
+     * @param  array<string, string|int|list<string>>  $where
+     * @return Collection<int, McpDailyClient>
+     */
+    private function clientRows(StatsRange $range, array $where = []): Collection
+    {
+        return $this->merged($range, McpDailyClient::query(), 'clients', McpDailyClient::class, $where);
+    }
+
+    /**
+     * Argument-value rows for the range, restricted to these (tool, argument)
+     * pairs, or to one tool's every argument.
+     *
+     * @param  array<string, string>|null  $toolArgs  tool => argument, or null for $tool's every argument
+     * @return Collection<int, McpDailyArgValue>
+     */
+    private function argValueRows(StatsRange $range, ?array $toolArgs, ?string $tool = null): Collection
+    {
+        $matches = fn (string $target, string $key): bool => $toolArgs === null
+            ? $target === $tool
+            : ($toolArgs[$target] ?? null) === $key;
+
+        $query = McpDailyArgValue::query();
+        if ($toolArgs === null) {
+            $query->where('target', $tool);
+        } else {
+            $query->where(function (Builder $q) use ($toolArgs): void {
+                $q->whereRaw('1 = 0');
+                foreach ($toolArgs as $name => $arg) {
+                    $q->orWhere(fn (Builder $w) => $w->where('target', $name)->where('arg_key', $arg));
                 }
             });
+        }
+
+        return $this->merged($range, $query, 'values', McpDailyArgValue::class, [])
+            ->filter(fn (McpDailyArgValue $v): bool => $matches($v->target, $v->arg_key))
+            ->values();
     }
 
-    /** @return Builder<McpDailyRollup> */
-    private function rollups(StatsRange $range): Builder
+    /**
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param  Builder<TModel>  $query
+     * @param  class-string<TModel>  $model
+     * @param  array<string, string|int|list<string>>  $where
+     * @return Collection<int, TModel>
+     */
+    private function merged(StatsRange $range, Builder $query, string $part, string $model, array $where): Collection
     {
-        return McpDailyRollup::query()->whereBetween('day', [$range->fromDay(), $range->toDay()]);
+        $today = now()->toDateString();
+        $includesToday = $range->fromDay() <= $today && $range->toDay() >= $today;
+        $historyTo = $includesToday ? now()->subDay()->toDateString() : $range->toDay();
+
+        foreach ($where as $column => $value) {
+            is_array($value) ? $query->whereIn($column, $value) : $query->where($column, $value);
+        }
+
+        $rows = $range->fromDay() <= $historyTo
+            ? $query->whereBetween('day', [$range->fromDay(), $historyTo])->get()
+            : collect();
+
+        if (! $includesToday) {
+            return $rows;
+        }
+
+        $live = collect($this->today()[$part])
+            ->filter(function (array $row) use ($where): bool {
+                foreach ($where as $column => $value) {
+                    if (is_array($value) ? ! in_array($row[$column], $value, true) : $row[$column] !== $value) {
+                        return false;
+                    }
+                }
+
+                return true;
+            })
+            ->map(fn (array $row) => (new $model)->forceFill($row));
+
+        return $rows->concat($live)->values();
     }
 
-    /** @return Builder<McpDailyClient> */
-    private function dailyClients(StatsRange $range): Builder
+    /**
+     * Today's raw rows, aggregated once per request.
+     *
+     * @return array{requests: int, rollups: list<array<string, mixed>>, clients: list<array<string, mixed>>, values: list<array<string, mixed>>}
+     */
+    private function today(): array
     {
-        return McpDailyClient::query()->whereBetween('day', [$range->fromDay(), $range->toDay()]);
+        return $this->today ??= $this->rollup->aggregate(now()->toDateString());
     }
 
     /** @return Builder<McpRequest> */
@@ -514,7 +598,7 @@ class McpStatsReport
     }
 
     /** @return array<string, mixed> */
-    private function callRow(McpRequest $r): array
+    public function callRow(McpRequest $r): array
     {
         $arguments = $r->arguments !== null ? json_decode($r->arguments, true) : null;
 

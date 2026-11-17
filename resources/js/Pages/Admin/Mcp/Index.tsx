@@ -1,5 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
-import { Badge, Table } from "@particle-academy/react-fancy";
+import { Badge, Button, Table } from "@particle-academy/react-fancy";
 import { adminLayout } from "../AdminLayout";
 import { EmptyRow, PageHeader, StatCard } from "../ui";
 import {
@@ -16,6 +16,7 @@ import {
     SessionsTable,
     toolHref,
     when,
+    withRange,
     type Range,
     type SessionRow,
 } from "./parts";
@@ -42,7 +43,14 @@ function McpOverview({ range, totals, series, topTools, topClients, methods, rec
             <PageHeader
                 title="MCP usage"
                 sub={`How agents use the hosted fancy-ui MCP server · ${range.from} to ${range.to}${rolledAt ? ` · rolled up ${when(rolledAt)}` : ""}`}
-                actions={<RangePicker range={range} />}
+                actions={
+                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                        <Button as={Link} color="emerald" size="sm" icon="radio" href={withRange("/admin/mcp/live", range)} data-mcp-open-live>
+                            Watch live
+                        </Button>
+                        <RangePicker range={range} />
+                    </div>
+                }
             />
             <div style={{ marginBottom: 16 }}>
                 <McpTabs range={range} />

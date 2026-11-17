@@ -27,6 +27,15 @@ Schedule::command('heuristics:verify-pixels')->twiceDailyAt(4, 16, 30);
 
 // Public download counts (npm, Packagist, PyPI) for /packages, each package
 // page and the home page. A failed fetch keeps the last known counts.
+// MCP usage analytics (/admin/mcp): re-roll today + the lookback window into
+// the daily tables every few minutes, and prune past the retention window.
+Schedule::command('mcp-stats:rollup')
+    ->cron((string) config('mcp-stats.rollup.cron', '*/10 * * * *'))
+    ->withoutOverlapping();
+Schedule::command('mcp-stats:prune')
+    ->dailyAt((string) config('mcp-stats.prune_at', '03:40'))
+    ->withoutOverlapping();
+
 Schedule::command('packages:fetch-downloads')
     ->dailyAt((string) config('package-downloads.schedule_at', '04:30'))
     ->withoutOverlapping();

@@ -41,6 +41,10 @@ const NAV: NavGroup[] = [
         items: [{ label: "Curriculum", icon: "graduation-cap", href: "/admin/curriculum" }],
     },
     {
+        section: "Analytics",
+        items: [{ label: "MCP usage", icon: "plug", href: "/admin/mcp" }],
+    },
+    {
         section: "Community",
         items: [
             { label: "Sites", icon: "activity", href: "/admin/sites" },
@@ -66,6 +70,7 @@ const CRUMB: Record<string, { group: string; crumb: string }> = {
     shop: { group: "Engagement", crumb: "Coin Shop" },
     mlm: { group: "Engagement", crumb: "Referral Program" },
     heuristics: { group: "Analytics", crumb: "Heuristics" },
+    mcp: { group: "Analytics", crumb: "MCP usage" },
     sites: { group: "Community", crumb: "Sites" },
     users: { group: "Community", crumb: "Users" },
     submissions: { group: "Community", crumb: "Submissions" },

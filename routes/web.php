@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFeaturesController;
 use App\Http\Controllers\Admin\AdminGamificationController;
 use App\Http\Controllers\Admin\AdminHeuristicsController;
+use App\Http\Controllers\Admin\AdminMcpController;
 use App\Http\Controllers\Admin\AdminMlmController;
 use App\Http\Controllers\Admin\AdminPlansController;
 use App\Http\Controllers\Admin\AdminProductsController;
@@ -56,6 +57,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UseCaseController;
 use App\Http\Controllers\Webhooks\GitHubWebhookController;
 use App\Http\Controllers\WhiteboardAgentController;
+use App\Http\Middleware\RecordMcpUsage;
 use App\Http\Middleware\TrackPackageBrowsing;
 use App\Mcp\Servers\FancyUiRegistry;
 use App\Models\ShowcaseSubmission;
@@ -349,7 +351,9 @@ Route::get('/schema/{name}', [SchemaController::class, 'show'])
 // Hosted MCP endpoint so any MCP-capable IDE (Claude Code, Cursor, VS Code,
 // Codex) can browse, search, and install Fancy Dev Kit components conversationally.
 // Tools: list_components, search_components, get_component, install_instructions.
-Mcp::web('/mcp', FancyUiRegistry::class);
+// Usage is recorded for /admin/mcp after the response is sent; see
+// App\Http\Middleware\RecordMcpUsage and config/mcp-stats.php.
+Mcp::web('/mcp', FancyUiRegistry::class)->middleware(RecordMcpUsage::class);
 
 // ─── Fancy Dev Kit Curriculum ─────────────────────────────────────────────
 // The kit teaching itself, on laravel-courses + @particle-academy/classroom —
@@ -532,6 +536,16 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     // attempts, certificates. Read-only; lessons are authored in
     // FancyCurriculumContent and reconciled by `fancy:build-curriculum`.
     Route::get('curriculum', [AdminCurriculumController::class, 'index'])->name('curriculum.index');
+
+    // MCP usage analytics — how agents use the hosted fancy-ui server at /mcp.
+    // Every page takes ?days=7|30 or ?from=&to= and carries it into its links.
+    Route::get('mcp', [AdminMcpController::class, 'index'])->name('mcp.index');
+    Route::get('mcp/tools/{tool}', [AdminMcpController::class, 'tool'])->where('tool', '[^/]+')->name('mcp.tools.show');
+    Route::get('mcp/clients/{client}', [AdminMcpController::class, 'client'])->where('client', '.+')->name('mcp.clients.show');
+    Route::get('mcp/sessions/{session}', [AdminMcpController::class, 'session'])->where('session', '[^/]+')->name('mcp.sessions.show');
+    Route::get('mcp/errors', [AdminMcpController::class, 'errors'])->name('mcp.errors.index');
+    Route::get('mcp/errors/calls', [AdminMcpController::class, 'errorCalls'])->name('mcp.errors.calls');
+    Route::get('mcp/search-demand', [AdminMcpController::class, 'searchDemand'])->name('mcp.search-demand');
 
     // App settings — admin-editable config (e.g. the tracker/pixel snippet).
     Route::get('settings', [AdminSettingsController::class, 'index'])->name('settings.index');

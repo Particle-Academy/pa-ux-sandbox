@@ -12,6 +12,8 @@ import "@particle-academy/fancy-passkeys-ui/styles.css";
 import { DocViewer as LwDocViewer } from "@particle-academy/last-word-ui";
 import { lastWordTileDoc } from "./lastWordUiFixtures";
 import { ReferralStats } from "@particle-academy/fancy-mlm-ui";
+import { TemplateBuilder } from "@particle-academy/fancy-template-ui";
+import { FIELDS as TPL_FIELDS, KINDS as TPL_KINDS, LISTS as TPL_LISTS, starterTemplate } from "./templateBuilderDemo";
 import "@particle-academy/fancy-flow/styles.css";
 import "@particle-academy/fancy-sheets/styles.css";
 
@@ -232,6 +234,32 @@ export function ReferralStatsTile() {
                     { key: "STORE-QR", scans: 15, uniqueSessions: 14, signups: 2, conversionRate: 2 / 14 },
                 ]}
             />
+        </div>
+    );
+}
+
+/**
+ * fancy-template-ui's builder: the showcase quote, read-only, scaled into the
+ * tile. Its rich-text fields mount react-fancy's contenteditable Editor, which
+ * needs a DOM, so it is deferred with the rest. The draft preview is the same
+ * last-word-ui DocViewer the full demo uses.
+ */
+export function TemplateBuilderTile() {
+    const [template] = useState(starterTemplate);
+    return (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <div className="pointer-events-none w-[250%] origin-top-left scale-[0.4]">
+                <TemplateBuilder
+                    value={template}
+                    onChange={() => {}}
+                    fields={TPL_FIELDS}
+                    lists={TPL_LISTS}
+                    kinds={TPL_KINDS}
+                    renderDraft={(doc) => <LwDocViewer doc={doc as never} />}
+                    readOnly
+                    surfaceId="tile-template-builder"
+                />
+            </div>
         </div>
     );
 }

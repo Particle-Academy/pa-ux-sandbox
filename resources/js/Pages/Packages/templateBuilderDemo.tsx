@@ -28,14 +28,14 @@ import {
     type TemplateEnvelope,
 } from "@particle-academy/fancy-template-ui";
 
-const FIELDS: FieldDef[] = [
+export const FIELDS: FieldDef[] = [
     { label: "Customer name", token: "customer.name", sample: "Ada Lovelace" },
     { label: "Customer company", token: "customer.company", sample: "Analytical Engines Ltd" },
     { label: "Quote number", token: "quote.number", sample: "Q-2042" },
     { label: "Quote total", token: "quote.total", sample: "$3,600.00" },
 ];
 
-const LISTS: ListDef[] = [
+export const LISTS: ListDef[] = [
     {
         label: "Line items",
         token: "lines",
@@ -67,11 +67,11 @@ const TOTALS = defineKind({
     },
 }) as BlockKind;
 
-const KINDS: BlockKind[] = [TOTALS];
+export const KINDS: BlockKind[] = [TOTALS];
 const CTX = { fields: FIELDS, lists: LISTS, kinds: KINDS };
 
 /** The starting quote: built through the package's own core, so it is exactly what the builder would make. */
-function starterTemplate(): TemplateEnvelope {
+export function starterTemplate(): TemplateEnvelope {
     let s = createState([], KINDS);
     s = applyOp(s, {
         t: "set_page",

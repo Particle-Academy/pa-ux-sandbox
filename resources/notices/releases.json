@@ -1,7 +1,7 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.66.0",
+        "agent-integrations": "0.67.0",
         "change-council": "0.7.2",
         "charlotte": "0.4.0",
         "classroom": "0.7.0",
@@ -84,7 +84,7 @@
         "fancy-service-token-py": "0.1.0",
         "fancy-sheets": "0.14.0",
         "fancy-sign": "0.3.0",
-        "fancy-sign-ui": "0.2.0",
+        "fancy-sign-ui": "0.3.0",
         "fancy-slides": "0.25.2",
         "fancy-template": "0.5.0",
         "fancy-template-ui": "0.1.0",
@@ -153,6 +153,22 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "fancy-sign-ui",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-11-18T20:57:39Z",
+            "first": false,
+            "summary": "./template: signing fields for the document builder"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.67.0",
+            "published_at": "2026-11-18T20:39:43Z",
+            "first": false,
+            "summary": "registerTemplateBridge: (./bridges/template, prefix tpl_): the document builder (@particle-academy/fancy-template-ui)…"
+        },
         {
             "slug": "fancy-service-token-js",
             "registry": "npm",

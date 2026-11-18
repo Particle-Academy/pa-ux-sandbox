@@ -1151,6 +1151,11 @@ const PREVIEWS: Record<string, PreviewFn> = {
             Statement of account, page 1 of 1
         </div>
     )),
+    "fancy-template-ui/template-builder": heavy("TemplateBuilderTile", () => (
+        <div className="grid h-36 w-full max-w-[20rem] place-items-center rounded-md border border-zinc-200 text-[11px] text-zinc-500 dark:border-zinc-800">
+            Quote template: heading, letter, one page per line item
+        </div>
+    )),
     "react-fancy/badge": () => (
         <div className="flex flex-wrap items-center justify-center gap-1.5">
             <Badge color="violet">new</Badge>

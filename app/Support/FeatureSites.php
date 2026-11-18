@@ -95,6 +95,7 @@ final class FeatureSites
                 ['name' => 'registerContentReactionBridge', 'import' => '@particle-academy/agent-integrations/bridges/content-reaction', 'tools' => 'reaction_*'],
                 ['name' => 'registerCoworkBridge', 'import' => '@particle-academy/agent-integrations/bridges/cowork', 'tools' => 'cowork_*'],
                 ['name' => 'registerSignBridge', 'import' => '@particle-academy/agent-integrations/bridges/sign', 'tools' => 'sign_*'],
+                ['name' => 'registerTemplateBridge', 'import' => '@particle-academy/agent-integrations/bridges/template', 'tools' => 'tpl_*'],
                 ['name' => 'registerAgentChatBridge', 'import' => '@particle-academy/agent-integrations/bridges/agent-chat', 'tools' => 'chat_* / hitl_list / knowledge_search'],
             ],
         ],

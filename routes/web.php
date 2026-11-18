@@ -52,6 +52,7 @@ use App\Http\Controllers\Showcase\ShopController;
 use App\Http\Controllers\Showcase\ShowcaseSubmissionController;
 use App\Http\Controllers\Showcase\StarterKitController;
 use App\Http\Controllers\Showcase\StarterKitDownloadController;
+use App\Http\Controllers\Showcase\TemplateBuilderPreviewController;
 use App\Http\Controllers\Showcase\VoteController;
 use App\Http\Controllers\Showcase\WhatsNewController;
 use App\Http\Controllers\SubscriptionController;
@@ -303,6 +304,12 @@ Route::post('/features/security/captcha', fn () => back())
 // The live demos on /features/documents that need PHP: the quote (priced by
 // fancy-formula, filled by fancy-template, written by fine-print, last-word
 // and holy-sheet) and fancy-qr's server QR. GET, nothing stored, throttled.
+// The template builder's exact preview (fancy-template-ui): render + write the
+// posted template, keep the PDF for ten minutes under the visitor's session.
+// Its page images are fine-print's PageImages route (AppServiceProvider).
+Route::post('/packages/fancy-template-ui/preview', [TemplateBuilderPreviewController::class, 'store'])
+    ->middleware('throttle:30,1')
+    ->name('packages.fancy-template-ui.preview');
 Route::get('/features/documents/quote', [DocumentsDemoController::class, 'quote'])
     ->middleware('throttle:60,1')
     ->name('features.documents.quote');

@@ -21,8 +21,8 @@ export const DOCUMENTS_CAPABILITIES: DocumentsCapability[] = [
         anchor: "templates",
         icon: "file-stack",
         title: "Templates",
-        body: "Fill a JSON template with data: tokens and filters, a row per item with $each, a section per item with $spread. One package for PHP, Node and Python.",
-        slugs: ["fancy-template"],
+        body: "Fill a JSON template with data: tokens and filters, a row per item with $each, a section per item with $spread. One package for PHP, Node and Python, and a visual builder that writes the template, with a preview that is the PDF page for page.",
+        slugs: ["fancy-template", "fancy-template-ui"],
     },
     {
         anchor: "templates",

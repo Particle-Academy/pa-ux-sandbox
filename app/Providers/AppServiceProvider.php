@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Showcase\TemplateBuilderPreviewController;
 use App\Http\Middleware\GateSelfAnalytics;
 use App\Models\Setting;
 use App\Models\User;
@@ -10,7 +11,9 @@ use App\Services\Mlm\MlmProgram;
 use App\Services\SupportEligibility;
 use App\Ssr\TimeoutHttpGateway;
 use FancyMlm\Plan\CompensationPlan;
+use FinePrint\Laravel\PageImages;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -36,6 +39,20 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // The template builder's exact preview pages, drawn by fine-print's own
+        // renderer from the PDF the preview POST wrote (TemplateBuilderPreviewController).
+        // Registered here, not in routes/web.php, so the binding also exists with
+        // cached routes. Public (the showcase has no sign-in), so the resolver keys
+        // every preview to the visitor's session, and throttled. No watermark: the
+        // preview must be the PDF's own pages, page for page.
+        PageImages::register(
+            $this->app['router'],
+            '/packages/fancy-template-ui/preview/{file}/pages/{page}',
+            static fn (Request $request, string $file) => TemplateBuilderPreviewController::resolve($request, $file),
+            Cache::store(),
+            ['middleware' => ['web', 'throttle:120,1'], 'watermark' => false, 'ttl' => TemplateBuilderPreviewController::TTL_SECONDS],
+        );
+
         // Live, admin-editable MLM compensation plan. The fancy-mlm package binds
         // CompensationPlan from the static config('mlm.plan'); we rebind it to the
         // Setting-backed plan MlmProgram owns, so the admin config surface can

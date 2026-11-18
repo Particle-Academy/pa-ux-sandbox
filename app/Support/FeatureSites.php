@@ -142,7 +142,7 @@ final class FeatureSites
             // shared cores and appear under "Built on".
             'members' => [
                 'family:holy-sheet', 'family:dark-slide', 'family:last-word', 'last-word-ui', 'family:fine-print',
-                'fancy-template', 'fancy-formula', 'family:fancy-qr', 'family:fancy-sign',
+                'fancy-template', 'fancy-template-ui', 'fancy-formula', 'family:fancy-qr', 'family:fancy-sign',
                 'fancy-doc-commons', 'fancy-file-commons',
             ],
             'bridges' => [],

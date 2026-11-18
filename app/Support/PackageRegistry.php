@@ -340,12 +340,6 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-sign-pades'],
             'why' => 'Node twin of fancy-sign-pades (CC-fancy-0036 phases 2 and 3). Its CMS/TSP library (pkijs proposed) is an APPROVAL REQUEST in the plan, not a decision. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13.',
         ],
-        'fancy-template-ui' => [
-            'name' => '@particle-academy/fancy-template-ui',
-            'repo' => 'Particle-Academy/fancy-template-ui',
-            'registries' => ['npm' => '@particle-academy/fancy-template-ui'],
-            'why' => 'A visual BUILDER for paged document templates: a block list (add, drag, remove), the selected block\'s settings, and a paged preview that is page-for-page what fine-print writes. It edits ONE fancy-template document, controlled (value/onChange, JSON); rendering stays Template::render plus fine-print Agent::toBytes(). Fields come from a host list as chips (nobody types braces), hosts register their own block kinds (some required exactly once), repeating sections map to $each, and an agent-integrations bridge stages agent edits for a person to accept. Signature, initials and date fields for fancy-sign are host blocks. Owner approved 2026-11-18 (q_52d2323e). Built on fancy-doc-commons, fancy-template, react-fancy and last-word-ui, not on fancy-cms-ui (a web-page model). Needs two additive fancy-template SPEC changes first (an editor key in the envelope, a spreading splice). Plan: .ai/plans/document-builder.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-18 (control @particle-academy/fancy-template resolved).',
-        ],
     ];
 
     /**
@@ -474,6 +468,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'dark-slide-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#dc2626'],
         'last-word-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
         'last-word-ui' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#2563eb'],
+        'fancy-template-ui' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#2563eb'],
         'fancy-heuristics-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-term-host' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
         'fancy-file-commons' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#eab308'],
@@ -670,6 +665,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             self::fancyComplianceUi(),
             self::fancyPasskeysUi(),
             self::lastWordUi(),
+            self::fancyTemplateUi(),
             self::laravelCourses(),
             self::classroom(),
             self::teachersAid(),
@@ -2567,6 +2563,23 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 ['slug' => 'passkey-sign-in', 'name' => 'PasskeySignIn', 'blurb' => 'Controlled sign-in surface — discoverable (usernameless) by default, username-first with conditional-UI autofill on request. A dismissed prompt reads as "cancelled", not as an error.'],
                 ['slug' => 'passkey-manager', 'name' => 'PasskeyManager', 'blurb' => 'Controlled list of a user\'s passkeys with rename and revoke. Rows are handled by credential ID, revoke stages for human confirmation, and the last-passkey lockout is spelled out rather than implied.'],
                 ['slug' => 'passkey-status', 'name' => 'PasskeyStatus', 'blurb' => 'Read-only "can this browser do passkeys?" indicator — support, a built-in authenticator, and autofill sign-in.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyTemplateUi(): array
+    {
+        return [
+            'slug' => 'fancy-template-ui',
+            'name' => 'fancy-template-ui',
+            'tagline' => 'A visual builder for paged document templates: a block list, the selected block\'s settings and a paged preview that is page for page what fine-print writes. Edits one fancy-template envelope, controlled; fields from the host as chips, repeating sections, host block kinds, and agent edits staged for a person to accept.',
+            'npm' => '@particle-academy/fancy-template-ui',
+            'repo' => 'Particle-Academy/fancy-template-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['fancy-template', 'fine-print'],
+            'components' => [
+                ['slug' => 'template-builder', 'name' => 'TemplateBuilder', 'blurb' => 'Build a quote template from blocks: a letterhead, field chips from the host list, line items repeated with a page each, a required totals block, and an exact preview drawn by fine-print on this server.'],
             ],
         ];
     }

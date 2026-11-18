@@ -30,7 +30,7 @@
         "fancy-code": "0.17.2",
         "fancy-compliance": "0.1.2",
         "fancy-compliance-ui": "0.4.0",
-        "fancy-conformance": "0.55.0",
+        "fancy-conformance": "0.55.1",
         "fancy-connector-core": "0.15.2",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.6.0",
@@ -79,11 +79,15 @@
         "fancy-query": "0.10.0",
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
+        "fancy-service-token": "0.1.0",
+        "fancy-service-token-js": "0.1.0",
+        "fancy-service-token-py": "0.1.0",
         "fancy-sheets": "0.14.0",
         "fancy-sign": "0.3.0",
         "fancy-sign-ui": "0.2.0",
         "fancy-slides": "0.25.2",
         "fancy-template": "0.5.0",
+        "fancy-template-ui": "0.1.0",
         "fancy-term": "0.8.1",
         "fancy-term-host": "0.13.0",
         "fancy-trading-js": "0.2.1",
@@ -149,6 +153,46 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "fancy-service-token-js",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-18T17:36:06Z",
+            "first": true,
+            "summary": "Verifier: for fst1 service tokens: HMAC-SHA256 with node:crypto (createHmac, timingSafeEqual), no JWT library, zero…"
+        },
+        {
+            "slug": "fancy-service-token-py",
+            "registry": "pypi",
+            "version": "0.1.0",
+            "published_at": "2026-11-18T17:22:13Z",
+            "first": true,
+            "summary": "Verifier: a framework-free verifier for fst1 service tokens: HMAC-SHA256 with hmac and compare_digest from the standard…"
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.55.1",
+            "published_at": "2026-11-18T16:56:07Z",
+            "first": false,
+            "summary": "The Python loader publishes to PyPI"
+        },
+        {
+            "slug": "fancy-service-token",
+            "registry": "composer",
+            "version": "0.1.0",
+            "published_at": "2026-11-18T16:49:54Z",
+            "first": true,
+            "summary": "Signer: short-lived fst1 service tokens, HMAC-SHA256 with hash_hmac and no JWT library"
+        },
+        {
+            "slug": "fancy-template-ui",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-18T16:35:48Z",
+            "first": true,
+            "summary": "No prototype pollution through a path or a patch"
+        },
         {
             "slug": "fancy-pixel",
             "registry": "npm",

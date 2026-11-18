@@ -149,6 +149,7 @@ import { DocViewer, DocFileView } from "@particle-academy/fancy-docs";
 // fancy-docs exports a DocViewer too, hence the alias.
 import { DocViewer as LwDocViewer, type DocViewerLayout as LwDocViewerLayout } from "@particle-academy/last-word-ui";
 import { lastWordSampleDoc, type LwPaper } from "./lastWordUiFixtures";
+import { TemplateBuilderSurface } from "./templateBuilderDemo";
 import {
     DownlineTree as MlmDownlineTree,
     CommissionStatement as MlmCommissionStatement,
@@ -537,6 +538,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-passkeys-ui/passkey-manager": PasskeyManagerDemo,
     "fancy-passkeys-ui/passkey-sign-in": PasskeySignInDemo,
     "last-word-ui/doc-viewer": LastWordDocViewerDemo,
+    "fancy-template-ui/template-builder": FancyTemplateUiBuilderDemo,
     "fancy-echarts/echart-3d": EChart3DDemo,
     "fancy-echarts/echart-graphic": EChartGraphicDemo,
     "fancy-3d/scene": SceneDemo,
@@ -5254,6 +5256,20 @@ const LW_DOCS: Record<LwPaper, ReturnType<typeof lastWordSampleDoc>> = {
 };
 
 type LwZoom = "fit" | "0.5" | "0.75" | "1";
+
+// ─── fancy-template-ui ───────────────────────────────────────────────────────
+// The document builder over this app's own exact preview (templateBuilderDemo.tsx).
+
+function FancyTemplateUiBuilderDemo() {
+    return (
+        <DemoNote
+            outOfBox="TemplateBuilder edits one fancy-template envelope, controlled: a block list you add to, drag or reorder with the keyboard, the selected block's settings, page settings with a letterhead, and a paged preview. Fields come from the host's list as chips, so nobody types braces; a line-items list becomes a repeating section with a page each; the host's own block kinds can be required exactly once. The exact preview is the host's: fancy-template renders, fine-print writes and draws the pages, so what you see is the PDF, page for page. Agent edits through registerTemplateBridge wait for a person to accept them."
+            demo="The quote, its fields and the totals block are this page's fixtures. The exact preview runs on this server and keeps each preview for ten minutes, only for your session; the draft view is last-word-ui's DocViewer in your browser, labelled because its page breaks may differ."
+        >
+            <TemplateBuilderSurface />
+        </DemoNote>
+    );
+}
 
 function LastWordDocViewerDemo() {
     const [paper, setPaper] = useState<LwPaper>("letter");

@@ -107,7 +107,7 @@ function CmsSurface({ state }: SurfaceProps) {
 export const cmsKind: KindModule = {
   kind: "cms",
   label: "CMS Page",
-  description: "A CMS page on the fancy-doc-commons node model. Drive it with cms_* tools: add/update/remove/move nodes, set_style / set_layout, and confirm/reject staged edits.",
+  description: "A CMS page on the fancy-doc-commons node model. Drive it with cms_* tools: add/update/remove/move nodes, set_style / set_layout, and withdraw staged edits. Only a person confirms a staged edit.",
   status: "wired",
   createState: seed,
   register: (server, ctx: KindBridgeContext) => {

@@ -719,8 +719,11 @@ MCP. `appId` is required. agent-integrations ships an in-memory store,
 `MemoryHumanPlusEventStore`, to start with.
 
 The agent gets `tui_surfaces_list`, `tui_surface_read` and `tui_action_invoke`,
-plus `tui_action_confirm` and `tui_action_reject` for parked actions. A parked
-action publishes an `action.proposed` event at `attention` priority.
+plus `tui_action_reject` to withdraw a parked action. A parked action publishes
+an `action.proposed` event at `attention` priority, and only a person confirms
+it, through the bridge's `confirm(id)` on the host (agent-integrations 0.66+).
+`confirmBy: "agent"` adds `tui_action_confirm` back, for a host that confirms
+upstream.
 
 Events reach the agent two ways, and the difference matters:
 

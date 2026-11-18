@@ -47,7 +47,8 @@ const TOUR: FeatureTourItem[] = [
             <>
                 <code className="feature-code">tui_action_invoke</code> runs a command, or, when its policy is{" "}
                 <code className="feature-code">propose</code> or <code className="feature-code">confirm</code>, parks it
-                for <code className="feature-code">tui_action_confirm</code> / <code className="feature-code">tui_action_reject</code>.
+                until a person confirms it through the host's <code className="feature-code">bridge.confirm(id)</code>. The
+                agent can withdraw it with <code className="feature-code">tui_action_reject</code>, never confirm it.
                 A <code className="feature-code">human-only</code> command refuses an agent outright.
             </>
         ),

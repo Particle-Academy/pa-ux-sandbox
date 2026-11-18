@@ -60,7 +60,7 @@
         "fancy-git-js": "0.3.3",
         "fancy-git-ui": "0.5.0",
         "fancy-grid": "0.4.1",
-        "fancy-heuristics": "0.6.0",
+        "fancy-heuristics": "0.7.0",
         "fancy-heuristics-js": "0.4.0",
         "fancy-inertia": "0.16.0",
         "fancy-live": "0.1.0",
@@ -72,7 +72,7 @@
         "fancy-passkeys": "0.3.0",
         "fancy-passkeys-js": "0.3.0",
         "fancy-passkeys-ui": "0.2.1",
-        "fancy-pixel": "0.4.0",
+        "fancy-pixel": "0.5.0",
         "fancy-pty": "0.5.0",
         "fancy-pwa": "0.2.0",
         "fancy-qr": "0.1.0",
@@ -149,6 +149,22 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "fancy-pixel",
+            "registry": "npm",
+            "version": "0.5.0",
+            "published_at": "2026-11-18T06:43:40Z",
+            "first": false,
+            "summary": "The badge says \"Powered by Fancy\""
+        },
+        {
+            "slug": "fancy-heuristics",
+            "registry": "composer",
+            "version": "0.7.0",
+            "published_at": "2026-11-18T06:02:53Z",
+            "first": false,
+            "summary": "The detector accepts the new badge wordmark, \"Powered by Fancy\""
+        },
         {
             "slug": "agent-integrations",
             "registry": "npm",

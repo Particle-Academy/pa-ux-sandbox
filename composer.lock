@@ -4234,16 +4234,16 @@
         },
         {
             "name": "particle-academy/fancy-heuristics",
-            "version": "v0.6.0",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-heuristics.git",
-                "reference": "629c51317cc0d83eb21d8289ed8c7e4a2a1d6981"
+                "reference": "2353144df65db435b8d695c79d77d1e9f08c8ce6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/629c51317cc0d83eb21d8289ed8c7e4a2a1d6981",
-                "reference": "629c51317cc0d83eb21d8289ed8c7e4a2a1d6981",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/2353144df65db435b8d695c79d77d1e9f08c8ce6",
+                "reference": "2353144df65db435b8d695c79d77d1e9f08c8ce6",
                 "shasum": ""
             },
             "require": {
@@ -4304,7 +4304,8 @@
                 "issues": "https://github.com/Particle-Academy/fancy-heuristics/issues",
                 "source": "https://github.com/Particle-Academy/fancy-heuristics"
             },
-            "time": "2026-11-08T21:15:24+00:00"
+            "time": "2026-11-18T06:02:53+00:00",
+            "published-time": "2026-11-18T06:40:15+00:00"
         },
         {
             "name": "particle-academy/fancy-mlm",

@@ -4393,16 +4393,16 @@
         },
         {
             "name": "particle-academy/fancy-template",
-            "version": "v0.4.0",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-template.git",
-                "reference": "ffb5fd689fd232a5ab9dd120b4ae9656ec645d35"
+                "reference": "fd92852d90636bd4a2999c1322fee2e3910a22ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-template/zipball/ffb5fd689fd232a5ab9dd120b4ae9656ec645d35",
-                "reference": "ffb5fd689fd232a5ab9dd120b4ae9656ec645d35",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-template/zipball/fd92852d90636bd4a2999c1322fee2e3910a22ec",
+                "reference": "fd92852d90636bd4a2999c1322fee2e3910a22ec",
                 "shasum": ""
             },
             "require": {
@@ -4411,7 +4411,7 @@
                 "php": "^8.4"
             },
             "require-dev": {
-                "particle-academy/fancy-conformance": "0.44.0",
+                "particle-academy/fancy-conformance": "0.55.0",
                 "particle-academy/fine-print": "0.6.0",
                 "pestphp/pest": "^3.0|^4.0"
             },
@@ -4445,9 +4445,10 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/fancy-template/issues",
-                "source": "https://github.com/Particle-Academy/fancy-template/tree/v0.4.0"
+                "source": "https://github.com/Particle-Academy/fancy-template/tree/v0.5.0"
             },
-            "time": "2026-11-04T05:52:36+00:00"
+            "time": "2026-11-18T02:53:49+00:00",
+            "published-time": "2026-11-18T04:10:07+00:00"
         },
         {
             "name": "particle-academy/fancy-x-files",

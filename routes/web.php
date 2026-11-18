@@ -33,6 +33,7 @@ use App\Http\Controllers\ServiceWorkerController;
 use App\Http\Controllers\Showcase\AgentKeyController;
 use App\Http\Controllers\Showcase\ConnectorRegistryController;
 use App\Http\Controllers\Showcase\DocsController;
+use App\Http\Controllers\Showcase\DocumentsDemoController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
 use App\Http\Controllers\Showcase\FancyTuiController;
@@ -299,6 +300,20 @@ Route::get('/radio/{track}.mp3', RadioAudioController::class)
 Route::post('/features/security/captcha', fn () => back())
     ->middleware(['throttle:20,1', 'captcha:feature-demo'])
     ->name('features.security.captcha');
+// The live demos on /features/documents that need PHP: the quote (priced by
+// fancy-formula, filled by fancy-template, written by fine-print, last-word
+// and holy-sheet) and fancy-qr's server QR. GET, nothing stored, throttled.
+Route::get('/features/documents/quote', [DocumentsDemoController::class, 'quote'])
+    ->middleware('throttle:60,1')
+    ->name('features.documents.quote');
+Route::get('/features/documents/quote.{format}', [DocumentsDemoController::class, 'file'])
+    ->whereIn('format', ['pdf', 'docx', 'xlsx'])
+    ->middleware('throttle:30,1')
+    ->name('features.documents.quote.file');
+Route::get('/features/documents/qr.{format}', [DocumentsDemoController::class, 'qr'])
+    ->whereIn('format', ['svg', 'png'])
+    ->middleware('throttle:60,1')
+    ->name('features.documents.qr');
 // The old top-level pages moved under Features. 301 with the query string, so
 // links and search ranking carry over. Only the PAGES moved: the TUI session
 // API below stays at /fancy-tui/session.

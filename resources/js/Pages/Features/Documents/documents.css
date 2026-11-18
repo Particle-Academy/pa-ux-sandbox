@@ -87,3 +87,55 @@ section.docs-bridge { padding: 16px 0 0; }
 
 .docs-site .feature-tour__card { border-radius: 4px 12px 4px 4px; }
 .docs-site .feature-cta { border-radius: 6px 22px 6px 6px; border-top: 4px solid var(--feature-accent); }
+
+/* ── Capabilities ───────────────────────────────────────── */
+.docs-capability { border-radius: 4px 12px 4px 4px; border-top: 3px solid var(--feature-accent); }
+.docs-capability > * { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.docs-capability__title { display: inline-flex; align-items: center; gap: 8px; color: var(--fg-1); text-decoration: none; min-height: 32px; }
+.docs-capability__title:hover { color: var(--feature-accent); }
+.docs-capability > .docs-capability__chips, .docs-capability__chips { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px; }
+.docs-capability__chips a { text-decoration: none; }
+@media (max-width: 900px) { .docs-capabilities { --fancy-grid-cols: 2; } }
+@media (max-width: 600px) { .docs-capabilities { --fancy-grid-cols: 1; } }
+
+/* ── The quote: form beside the template ────────────────── */
+.docs-quote { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 24px; min-width: 0; }
+@media (max-width: 900px) { .docs-quote { grid-template-columns: minmax(0, 1fr); } }
+.docs-quote__form, .docs-quote__template { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.docs-quote__numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 520px) { .docs-quote__numbers { grid-template-columns: minmax(0, 1fr); } }
+.docs-quote__downloads { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px dashed color-mix(in oklch, var(--feature-accent) 35%, var(--border-1)); }
+.docs-quote__buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.docs-quote button, .docs-quote a { min-height: 44px; }
+.docs-quote__template > [data-documents-quote-parity] { align-self: flex-start; }
+
+/* ── Viewer: paper on a desk ────────────────────────────── */
+.docs-viewer { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.docs-viewer__pages {
+  min-width: 0; max-height: 820px; overflow: auto;
+  padding: 16px; border-radius: 6px;
+  background: color-mix(in oklch, var(--feature-accent) 8%, var(--bg-1, var(--bg-0)));
+}
+
+/* ── Formulas ───────────────────────────────────────────── */
+.docs-formulas { display: flex; flex-direction: column; gap: 12px; min-width: 0; overflow-x: auto; }
+.docs-formulas__formula { font-family: var(--font-mono); font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* ── Codes ──────────────────────────────────────────────── */
+.docs-qr { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.docs-qr__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .docs-qr__grid { grid-template-columns: minmax(0, 1fr); } }
+.docs-qr__card > * { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.docs-qr__image { width: 168px; }
+.docs-qr__image > * { width: 100%; }
+.docs-qr__status { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+/* ── Signing ────────────────────────────────────────────── */
+.docs-sign { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; min-width: 0; }
+.docs-sign__record, .docs-sign__verify, .docs-sign__footer { grid-column: 1 / -1; }
+.docs-sign__footer { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+@media (max-width: 900px) { .docs-sign { grid-template-columns: minmax(0, 1fr); } }
+.docs-sign__ceremony, .docs-sign__side, .docs-sign__record, .docs-sign__verify { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.docs-sign__code { font-family: var(--font-mono); font-size: 20px; letter-spacing: 0.2em; color: var(--feature-accent); }
+.docs-sign button { min-height: 44px; }
+.docs-sign__trail { max-height: 520px; overflow-y: auto; padding-right: 4px; }

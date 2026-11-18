@@ -1,0 +1,136 @@
+{
+  "fancyTemplate": 1,
+  "writer": "holy-sheet",
+  "description": "The same quote as a workbook: a branded cover sheet, a summary with one row per pricing model plus tax and a summed total, and one sheet per pricing model ($each over sheets) with its line items and a SUM total. Amounts are numbers in currency columns, so the buyer can work with them.",
+  "variables": {
+    "quote": {
+      "type": "object",
+      "required": true,
+      "properties": {
+        "number": { "type": "string", "required": true, "maxLength": 32 },
+        "title": { "type": "string", "required": true, "maxLength": 120 },
+        "issuedAt": { "type": "date", "required": true },
+        "validUntil": { "type": "date", "required": true },
+        "url": { "type": "string", "required": true, "maxLength": 200 }
+      }
+    },
+    "seller": {
+      "type": "object",
+      "required": true,
+      "properties": {
+        "name": { "type": "string", "required": true, "maxLength": 80 },
+        "tagline": { "type": "string", "required": true, "maxLength": 120 },
+        "address": { "type": "string", "required": true, "maxLength": 160 },
+        "email": { "type": "string", "required": true, "maxLength": 120 },
+        "phone": { "type": "string", "required": true, "maxLength": 40 },
+        "signer": { "type": "string", "required": true, "maxLength": 80 },
+        "signerTitle": { "type": "string", "required": true, "maxLength": 80 }
+      }
+    },
+    "client": {
+      "type": "object",
+      "required": true,
+      "properties": {
+        "company": { "type": "string", "required": true, "maxLength": 80 },
+        "contact": { "type": "string", "required": true, "maxLength": 80 }
+      }
+    },
+    "models": {
+      "type": "array",
+      "required": true,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "number": { "type": "string", "required": true, "maxLength": 4 },
+          "name": { "type": "string", "required": true, "maxLength": 80 },
+          "sheet": { "type": "string", "required": true, "maxLength": 31 },
+          "basis": { "type": "string", "required": true, "maxLength": 80 },
+          "subtotalAmount": { "type": "number", "required": true },
+          "lines": {
+            "type": "array",
+            "required": true,
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": { "type": "string", "required": true, "maxLength": 120 },
+                "detail": { "type": "string", "default": "", "maxLength": 200 },
+                "qty": { "type": "number", "required": true },
+                "unitAmount": { "type": "number", "required": true },
+                "amountValue": { "type": "number", "required": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "taxLabel": { "type": "string", "required": true, "maxLength": 40 },
+    "taxAmount": { "type": "number", "required": true },
+    "total": { "type": "integer", "required": true }
+  },
+  "document": {
+    "meta": { "creator": "Fieldwork Studio" },
+    "sheets": [
+      {
+        "name": "Quote",
+        "theme": "plain",
+        "columnWidths": { "0": 150, "1": 330 },
+        "mergedRegions": [{ "start": "A1", "end": "B1" }, { "start": "A2", "end": "B2" }, { "start": "A4", "end": "B4" }],
+        "cells": {
+          "A1": { "value": "FIELDWORK STUDIO", "format": { "bold": true, "fontSize": 18, "color": "#FFFFFF", "backgroundColor": "#1B2F4B" } },
+          "A2": { "value": "{{ seller.tagline }}", "format": { "fontSize": 9, "color": "#C9D3E0", "backgroundColor": "#1B2F4B" } },
+          "A4": { "value": "{{ quote.title }}", "format": { "bold": true, "fontSize": 16, "color": "#1B2F4B" } },
+          "A6": { "value": "Prepared for", "format": { "bold": true, "color": "#5B6675", "fontSize": 9 } },
+          "B6": { "value": "{{ client.company }}, attention {{ client.contact }}" },
+          "A7": { "value": "Quote number", "format": { "bold": true, "color": "#5B6675", "fontSize": 9 } },
+          "B7": { "value": "{{ quote.number }}" },
+          "A8": { "value": "Issued", "format": { "bold": true, "color": "#5B6675", "fontSize": 9 } },
+          "B8": { "value": "{{ quote.issuedAt | date:\"d MMMM yyyy\" }}" },
+          "A9": { "value": "Valid until", "format": { "bold": true, "color": "#5B6675", "fontSize": 9 } },
+          "B9": { "value": "{{ quote.validUntil | date:\"d MMMM yyyy\" }}" },
+          "A10": { "value": "Prepared by", "format": { "bold": true, "color": "#5B6675", "fontSize": 9 } },
+          "B10": { "value": "{{ seller.signer }}, {{ seller.signerTitle }}" },
+          "A12": { "value": "Total", "format": { "bold": true, "color": "#FFFFFF", "backgroundColor": "#1B2F4B", "fontSize": 12 } },
+          "B12": { "value": "{{ total | money:USD }}", "format": { "bold": true, "color": "#FFFFFF", "backgroundColor": "#1B2F4B", "fontSize": 12, "textAlign": "right" } },
+          "A14": { "value": "The Summary sheet lists each pricing model, and each model has its own sheet of line items.", "format": { "italic": true, "color": "#5B6675", "fontSize": 9 } },
+          "A16": { "value": "{{ seller.name }} | {{ seller.address }} | {{ seller.email }} | {{ seller.phone }}", "format": { "color": "#5B6675", "fontSize": 8 } }
+        }
+      },
+      {
+        "name": "Summary",
+        "theme": "business",
+        "frozenRows": 1,
+        "columns": [
+          { "header": "No.", "type": "string", "width": 40 },
+          { "header": "Pricing model", "type": "string", "width": 170 },
+          { "header": "Basis", "type": "string", "width": 220 },
+          { "header": "Amount", "type": "currency", "currency": "USD", "width": 100 }
+        ],
+        "rows": [
+          { "$each": "models", "$as": "model", "$value": ["{{ model.number }}", "{{ model.name }}", "{{ model.basis }}", "{{ model.subtotalAmount }}"] },
+          ["", "{{ taxLabel }}", "", "{{ taxAmount }}"]
+        ],
+        "totals": { "Amount": "sum" }
+      },
+      {
+        "$each": "models",
+        "$as": "model",
+        "name": "{{ model.sheet }}",
+        "theme": "business",
+        "frozenRows": 1,
+        "columns": [
+          { "header": "Description", "type": "string", "width": 200 },
+          { "header": "Detail", "type": "string", "width": 180 },
+          { "header": "Qty", "type": "number", "decimals": 0, "width": 60 },
+          { "header": "Unit price", "type": "currency", "currency": "USD", "width": 80 },
+          { "header": "Amount", "type": "currency", "currency": "USD", "width": 90 }
+        ],
+        "rows": [
+          { "$each": "model.lines", "$as": "line", "$value": ["{{ line.description }}", "{{ line.detail }}", "{{ line.qty }}", "{{ line.unitAmount }}", "{{ line.amountValue }}"] }
+        ],
+        "totals": { "Amount": "sum" }
+      }
+    ]
+  }
+}

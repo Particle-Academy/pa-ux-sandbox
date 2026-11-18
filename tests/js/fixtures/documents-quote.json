@@ -1,0 +1,3139 @@
+{
+    "data": {
+        "quote": {
+            "number": "Q-2026-0142",
+            "title": "Website platform rebuild",
+            "issuedAt": "2026-11-17",
+            "validUntil": "2026-12-17",
+            "url": "quotes.example.com/Q-2026-0142"
+        },
+        "seller": {
+            "name": "Fieldwork Studio",
+            "tagline": "Design and engineering for the web",
+            "address": "410 Example Street, Portland, OR 97204",
+            "email": "hello@example.com",
+            "phone": "+1 555 010 0142",
+            "signer": "Avery Quinn",
+            "signerTitle": "Principal"
+        },
+        "client": {
+            "company": "Example Corp",
+            "contact": "Jordan Lee"
+        },
+        "intro": "Thank you for the conversations over the last few weeks. This quote sets out how we would rebuild your website platform, in up to three parts you can take together or on their own: a fixed-fee build, a monthly care retainer and a platform licence. Each has its own page with the line items behind its price.",
+        "models": [
+            {
+                "key": "fixed",
+                "number": "01",
+                "lines": [
+                    {
+                        "description": "Discovery and research",
+                        "detail": "Stakeholder interviews, analytics review and a written brief",
+                        "qty": 1,
+                        "unit": 480000,
+                        "amount": 480000,
+                        "unitAmount": 4800,
+                        "amountValue": 4800
+                    },
+                    {
+                        "description": "Design system and interface",
+                        "detail": "Tokens, components and every page template, in two review rounds",
+                        "qty": 1,
+                        "unit": 1450000,
+                        "amount": 1450000,
+                        "unitAmount": 14500,
+                        "amountValue": 14500
+                    },
+                    {
+                        "description": "Build and launch",
+                        "detail": "Laravel and React build, content migration and go-live",
+                        "qty": 1,
+                        "unit": 2200000,
+                        "amount": 2200000,
+                        "unitAmount": 22000,
+                        "amountValue": 22000
+                    },
+                    {
+                        "description": "Quality and accessibility audit",
+                        "detail": "WCAG 2.2 AA review and fixes before launch",
+                        "qty": 1,
+                        "unit": 320000,
+                        "amount": 320000,
+                        "unitAmount": 3200,
+                        "amountValue": 3200
+                    }
+                ],
+                "subtotalAmount": 44500,
+                "name": "Fixed-fee build",
+                "sheet": "Fixed-fee build",
+                "basis": "One price for an agreed scope, invoiced at milestones",
+                "summary": "We research, design and build the new platform to the scope agreed at discovery, then launch it with you. The price is fixed: changes to scope are quoted separately before any work starts.",
+                "note": "Invoiced 30% at signature, 40% at design sign-off and 30% at launch.",
+                "subtotal": 4450000
+            },
+            {
+                "key": "retainer",
+                "number": "02",
+                "lines": [
+                    {
+                        "description": "Design and engineering hours",
+                        "detail": "20 hours a month for 6 months",
+                        "qty": 120,
+                        "unit": 16500,
+                        "amount": 1980000,
+                        "unitAmount": 165,
+                        "amountValue": 19800
+                    },
+                    {
+                        "description": "Priority support",
+                        "detail": "Next-business-day response, uptime monitoring",
+                        "qty": 6,
+                        "unit": 45000,
+                        "amount": 270000,
+                        "unitAmount": 450,
+                        "amountValue": 2700
+                    }
+                ],
+                "subtotalAmount": 22500,
+                "name": "Monthly care retainer",
+                "sheet": "Care retainer",
+                "basis": "20 hours a month for 6 months",
+                "summary": "A reserved block of design and engineering time every month, for improvements, new pages and anything the launch uncovers, with priority support for the site itself.",
+                "note": "Unused hours roll over for one month. Invoiced monthly in advance.",
+                "subtotal": 2250000
+            },
+            {
+                "key": "usage",
+                "number": "03",
+                "lines": [
+                    {
+                        "description": "Editor seats",
+                        "detail": "120 seats x 12 months",
+                        "qty": 1440,
+                        "unit": 975,
+                        "amount": 1404000,
+                        "unitAmount": 9.75,
+                        "amountValue": 14040
+                    },
+                    {
+                        "description": "Hosting, backups and monitoring",
+                        "detail": "Managed hosting, per month",
+                        "qty": 12,
+                        "unit": 29000,
+                        "amount": 348000,
+                        "unitAmount": 290,
+                        "amountValue": 3480
+                    }
+                ],
+                "subtotalAmount": 17520,
+                "name": "Platform licence",
+                "sheet": "Platform licence",
+                "basis": "120 editor seats for 12 months, priced by volume",
+                "summary": "The editing platform your team works in, billed per editor seat per month. The seat price falls as the team grows; the break this quote uses is shown beside the line.",
+                "note": "Seat price breaks: 1-49 seats $12.50, 50-99 $11.00, 100-499 $9.75, 500-999 $8.40, 1,000+ $7.20 per seat per month.",
+                "subtotal": 1752000
+            }
+        ],
+        "subtotal": 8452000,
+        "taxLabel": "Sales tax (8.25%)",
+        "tax": 697290,
+        "taxAmount": 6972.9,
+        "total": 9149290,
+        "terms": [
+            "This quote is valid for 30 days from the date of issue.",
+            "Prices are in US dollars. Sales tax is shown separately and charged where it applies.",
+            "Invoices are payable within 30 days. Late payments may pause scheduled work.",
+            "Scope changes are agreed in writing, with their price, before work on them starts.",
+            "You own the finished design and code on final payment; the platform licence is a subscription.",
+            "Either party may end the retainer or the licence with 30 days written notice."
+        ],
+        "qr": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeAQMAAABoqSz0AAAABlBMVEX///8AAABVwtN+AAABSUlEQVR42u2X0Q2EMAxDkTpAR8rqjMQAlXJ23KqgW8BIRBUHfXyQnuOmx/HFF++MZJwY7YqW5+h8Hq6Qv/3kWxdG6N4X9hwdeeA2wHGPtMwhkmjK4xUw8x2wZIIJXFvyxT8NGUGVIObW+K9PI7gTgqj3kpvCUUpB8cHb6BnFhy3siWujTFLXuxm7QW4aeOS+kVWC+RC1GSxv41PxKsQrbCG0jIkJZcmYcYVsHA58Oxe+6U/YMvGDLLuScxmGhi3kl1cHwVZiukXYQu1v2utWEltDblBa1ty0t12CdlBtztRy1aIq0hSW9ULape7ZBdtCLjObMiw/5SyN28L1CmtRSdyaCDs4j5jzGBTPY5AdnCpG77CanbENww/WMUhOnIrLHvLzoy0yvGH5cUgv7dEZm8G1140S+Hj2mm5wlWDoDFTeFocr/OKLt8UPzOwZW8VdNwIAAAAASUVORK5CYII="
+    },
+    "document": {
+        "title": "Website platform rebuild -- quote Q-2026-0142",
+        "page": {
+            "size": "letter",
+            "margins": {
+                "top": 100,
+                "bottom": 80,
+                "left": 64,
+                "right": 64,
+                "header": 30,
+                "footer": 30
+            },
+            "firstHeader": {
+                "blocks": [
+                    {
+                        "type": "table",
+                        "widths": [
+                            62,
+                            38
+                        ],
+                        "borders": {
+                            "top": {
+                                "style": "none"
+                            },
+                            "right": {
+                                "style": "none"
+                            },
+                            "bottom": {
+                                "style": "none"
+                            },
+                            "left": {
+                                "style": "none"
+                            },
+                            "insideH": {
+                                "style": "none"
+                            },
+                            "insideV": {
+                                "style": "none"
+                            }
+                        },
+                        "rows": [
+                            {
+                                "cells": [
+                                    {
+                                        "shading": "#1B2F4B",
+                                        "padding": {
+                                            "top": 10,
+                                            "bottom": 10,
+                                            "left": 14,
+                                            "right": 8
+                                        },
+                                        "valign": "center",
+                                        "blocks": [
+                                            {
+                                                "type": "paragraph",
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "FIELDWORK",
+                                                        "bold": true,
+                                                        "size": 15,
+                                                        "color": "#FFFFFF",
+                                                        "letterSpacing": 2
+                                                    },
+                                                    {
+                                                        "text": "  STUDIO",
+                                                        "size": 15,
+                                                        "color": "#E9A27C",
+                                                        "letterSpacing": 2
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "paragraph",
+                                                "spaceBefore": 2,
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "Design and engineering for the web",
+                                                        "size": 8,
+                                                        "color": "#C9D3E0"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "shading": "#1B2F4B",
+                                        "padding": {
+                                            "top": 10,
+                                            "bottom": 10,
+                                            "left": 8,
+                                            "right": 14
+                                        },
+                                        "valign": "center",
+                                        "blocks": [
+                                            {
+                                                "type": "paragraph",
+                                                "align": "right",
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "PROPOSAL & QUOTE",
+                                                        "bold": true,
+                                                        "size": 9,
+                                                        "color": "#E9A27C",
+                                                        "letterSpacing": 1.5
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "paragraph",
+                                                "align": "right",
+                                                "spaceBefore": 2,
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "Q-2026-0142",
+                                                        "size": 9,
+                                                        "color": "#FFFFFF"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "header": {
+                "blocks": [
+                    {
+                        "type": "table",
+                        "widths": [
+                            60,
+                            40
+                        ],
+                        "borders": {
+                            "top": {
+                                "style": "none"
+                            },
+                            "right": {
+                                "style": "none"
+                            },
+                            "bottom": {
+                                "style": "single",
+                                "width": 1,
+                                "color": "#1B2F4B"
+                            },
+                            "left": {
+                                "style": "none"
+                            },
+                            "insideH": {
+                                "style": "none"
+                            },
+                            "insideV": {
+                                "style": "none"
+                            }
+                        },
+                        "rows": [
+                            {
+                                "cells": [
+                                    {
+                                        "padding": {
+                                            "top": 0,
+                                            "bottom": 6,
+                                            "left": 0,
+                                            "right": 0
+                                        },
+                                        "blocks": [
+                                            {
+                                                "type": "paragraph",
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "FIELDWORK",
+                                                        "bold": true,
+                                                        "size": 10,
+                                                        "color": "#1B2F4B",
+                                                        "letterSpacing": 1.5
+                                                    },
+                                                    {
+                                                        "text": "  STUDIO",
+                                                        "size": 10,
+                                                        "color": "#C25E2E",
+                                                        "letterSpacing": 1.5
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "padding": {
+                                            "top": 0,
+                                            "bottom": 6,
+                                            "left": 0,
+                                            "right": 0
+                                        },
+                                        "blocks": [
+                                            {
+                                                "type": "paragraph",
+                                                "align": "right",
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "Quote Q-2026-0142  |  Example Corp",
+                                                        "size": 8,
+                                                        "color": "#5B6675"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "footer": {
+                "blocks": [
+                    {
+                        "type": "table",
+                        "widths": [
+                            75,
+                            25
+                        ],
+                        "borders": {
+                            "top": {
+                                "style": "single",
+                                "width": 0.5,
+                                "color": "#D5DBE3"
+                            },
+                            "right": {
+                                "style": "none"
+                            },
+                            "bottom": {
+                                "style": "none"
+                            },
+                            "left": {
+                                "style": "none"
+                            },
+                            "insideH": {
+                                "style": "none"
+                            },
+                            "insideV": {
+                                "style": "none"
+                            }
+                        },
+                        "rows": [
+                            {
+                                "cells": [
+                                    {
+                                        "padding": {
+                                            "top": 6,
+                                            "bottom": 0,
+                                            "left": 0,
+                                            "right": 0
+                                        },
+                                        "blocks": [
+                                            {
+                                                "type": "paragraph",
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "Fieldwork Studio  |  410 Example Street, Portland, OR 97204  |  hello@example.com  |  +1 555 010 0142",
+                                                        "size": 7.5,
+                                                        "color": "#5B6675"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "padding": {
+                                            "top": 6,
+                                            "bottom": 0,
+                                            "left": 0,
+                                            "right": 0
+                                        },
+                                        "blocks": [
+                                            {
+                                                "type": "paragraph",
+                                                "align": "right",
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "Page {page} of {pages}",
+                                                        "size": 7.5,
+                                                        "color": "#5B6675"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "firstFooter": {
+                "blocks": [
+                    {
+                        "type": "table",
+                        "widths": [
+                            75,
+                            25
+                        ],
+                        "borders": {
+                            "top": {
+                                "style": "single",
+                                "width": 0.5,
+                                "color": "#D5DBE3"
+                            },
+                            "right": {
+                                "style": "none"
+                            },
+                            "bottom": {
+                                "style": "none"
+                            },
+                            "left": {
+                                "style": "none"
+                            },
+                            "insideH": {
+                                "style": "none"
+                            },
+                            "insideV": {
+                                "style": "none"
+                            }
+                        },
+                        "rows": [
+                            {
+                                "cells": [
+                                    {
+                                        "padding": {
+                                            "top": 6,
+                                            "bottom": 0,
+                                            "left": 0,
+                                            "right": 0
+                                        },
+                                        "blocks": [
+                                            {
+                                                "type": "paragraph",
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "Fieldwork Studio  |  410 Example Street, Portland, OR 97204  |  hello@example.com  |  +1 555 010 0142",
+                                                        "size": 7.5,
+                                                        "color": "#5B6675"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "padding": {
+                                            "top": 6,
+                                            "bottom": 0,
+                                            "left": 0,
+                                            "right": 0
+                                        },
+                                        "blocks": [
+                                            {
+                                                "type": "paragraph",
+                                                "align": "right",
+                                                "spaceAfter": 0,
+                                                "runs": [
+                                                    {
+                                                        "text": "Page {page} of {pages}",
+                                                        "size": 7.5,
+                                                        "color": "#5B6675"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "blocks": [
+            {
+                "type": "paragraph",
+                "spaceBefore": 36,
+                "spaceAfter": 6,
+                "runs": [
+                    {
+                        "text": "PREPARED FOR EXAMPLE CORP",
+                        "bold": true,
+                        "size": 9,
+                        "color": "#C25E2E",
+                        "letterSpacing": 1.5
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "level": 1,
+                "spaceAfter": 6,
+                "runs": [
+                    {
+                        "text": "Website platform rebuild",
+                        "size": 30,
+                        "color": "#1B2F4B"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "spaceAfter": 22,
+                "runs": [
+                    {
+                        "text": "A proposal and quote from Fieldwork Studio, for the attention of Jordan Lee.",
+                        "size": 12,
+                        "color": "#5B6675"
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "widths": [
+                    25,
+                    25,
+                    25,
+                    25
+                ],
+                "borders": {
+                    "top": {
+                        "style": "single",
+                        "width": 1.5,
+                        "color": "#1B2F4B"
+                    },
+                    "right": {
+                        "style": "none"
+                    },
+                    "bottom": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "left": {
+                        "style": "none"
+                    },
+                    "insideH": {
+                        "style": "none"
+                    },
+                    "insideV": {
+                        "style": "none"
+                    }
+                },
+                "cellPadding": {
+                    "top": 8,
+                    "bottom": 2,
+                    "left": 0,
+                    "right": 8
+                },
+                "rows": [
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "QUOTE NUMBER",
+                                                "bold": true,
+                                                "size": 7.5,
+                                                "color": "#5B6675",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "ISSUED",
+                                                "bold": true,
+                                                "size": 7.5,
+                                                "color": "#5B6675",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "VALID UNTIL",
+                                                "bold": true,
+                                                "size": 7.5,
+                                                "color": "#5B6675",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "PREPARED BY",
+                                                "bold": true,
+                                                "size": 7.5,
+                                                "color": "#5B6675",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "padding": {
+                                    "top": 2,
+                                    "bottom": 10,
+                                    "left": 0,
+                                    "right": 8
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Q-2026-0142",
+                                                "size": 10.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 2,
+                                    "bottom": 10,
+                                    "left": 0,
+                                    "right": 8
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "17 November 2026",
+                                                "size": 10.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 2,
+                                    "bottom": 10,
+                                    "left": 0,
+                                    "right": 8
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "17 December 2026",
+                                                "size": 10.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 2,
+                                    "bottom": 10,
+                                    "left": 0,
+                                    "right": 8
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Avery Quinn",
+                                                "size": 10.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "spaceBefore": 22,
+                "spaceAfter": 10,
+                "lineHeight": 1.4,
+                "runs": [
+                    {
+                        "text": "Dear Jordan Lee,",
+                        "size": 10.5
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "spaceAfter": 18,
+                "lineHeight": 1.4,
+                "runs": [
+                    {
+                        "text": "Thank you for the conversations over the last few weeks. This quote sets out how we would rebuild your website platform, in up to three parts you can take together or on their own: a fixed-fee build, a monthly care retainer and a platform licence. Each has its own page with the line items behind its price.",
+                        "size": 10.5
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "level": 2,
+                "keepNext": true,
+                "spaceAfter": 8,
+                "runs": [
+                    {
+                        "text": "At a glance",
+                        "size": 14,
+                        "color": "#1B2F4B"
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "widths": [
+                    10,
+                    62,
+                    28
+                ],
+                "borders": {
+                    "top": {
+                        "style": "none"
+                    },
+                    "right": {
+                        "style": "none"
+                    },
+                    "bottom": {
+                        "style": "none"
+                    },
+                    "left": {
+                        "style": "none"
+                    },
+                    "insideH": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "insideV": {
+                        "style": "none"
+                    }
+                },
+                "cellPadding": {
+                    "top": 6,
+                    "bottom": 6,
+                    "left": 6,
+                    "right": 6
+                },
+                "rows": [
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "01",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#C25E2E"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Fixed-fee build",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "One price for an agreed scope, invoiced at milestones",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "valign": "center",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$44,500.00",
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "02",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#C25E2E"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Monthly care retainer",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "20 hours a month for 6 months",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "valign": "center",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$22,500.00",
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "03",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#C25E2E"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Platform licence",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "120 editor seats for 12 months, priced by volume",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "valign": "center",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$17,520.00",
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "colSpan": 2,
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Subtotal",
+                                                "size": 9.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$84,520.00",
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "colSpan": 2,
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Sales tax (8.25%)",
+                                                "size": 9.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$6,972.90",
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "colSpan": 2,
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "TOTAL",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$91,492.90",
+                                                "bold": true,
+                                                "size": 12,
+                                                "color": "#FFFFFF"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "pageBreak"
+            },
+            {
+                "type": "paragraph",
+                "spaceAfter": 2,
+                "keepNext": true,
+                "runs": [
+                    {
+                        "text": "PRICING MODEL 01",
+                        "bold": true,
+                        "size": 8.5,
+                        "color": "#C25E2E",
+                        "letterSpacing": 1.5
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "level": 2,
+                "keepNext": true,
+                "spaceAfter": 4,
+                "runs": [
+                    {
+                        "text": "Fixed-fee build",
+                        "size": 20,
+                        "color": "#1B2F4B"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "keepNext": true,
+                "spaceAfter": 6,
+                "runs": [
+                    {
+                        "text": "One price for an agreed scope, invoiced at milestones",
+                        "size": 10,
+                        "color": "#5B6675"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "keepNext": true,
+                "spaceAfter": 14,
+                "lineHeight": 1.4,
+                "runs": [
+                    {
+                        "text": "We research, design and build the new platform to the scope agreed at discovery, then launch it with you. The price is fixed: changes to scope are quoted separately before any work starts.",
+                        "size": 10.5
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "widths": [
+                    50,
+                    12,
+                    18,
+                    20
+                ],
+                "borders": {
+                    "top": {
+                        "style": "none"
+                    },
+                    "right": {
+                        "style": "none"
+                    },
+                    "bottom": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "left": {
+                        "style": "none"
+                    },
+                    "insideH": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "insideV": {
+                        "style": "none"
+                    }
+                },
+                "cellPadding": {
+                    "top": 6,
+                    "bottom": 6,
+                    "left": 8,
+                    "right": 8
+                },
+                "rows": [
+                    {
+                        "header": true,
+                        "cells": [
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "DESCRIPTION",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "QTY",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "UNIT PRICE",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "AMOUNT",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Discovery and research",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceBefore": 1,
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Stakeholder interviews, analytics review and a written brief",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "1",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$4,800.00",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$4,800.00",
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Design system and interface",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceBefore": 1,
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Tokens, components and every page template, in two review rounds",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "1",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$14,500.00",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$14,500.00",
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Build and launch",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceBefore": 1,
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Laravel and React build, content migration and go-live",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "1",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$22,000.00",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$22,000.00",
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Quality and accessibility audit",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceBefore": 1,
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "WCAG 2.2 AA review and fixes before launch",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "1",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$3,200.00",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$3,200.00",
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "colSpan": 3,
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Fixed-fee build subtotal",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$44,500.00",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "spaceBefore": 8,
+                "runs": [
+                    {
+                        "text": "Invoiced 30% at signature, 40% at design sign-off and 30% at launch.",
+                        "size": 8.5,
+                        "color": "#5B6675"
+                    }
+                ]
+            },
+            {
+                "type": "pageBreak"
+            },
+            {
+                "type": "paragraph",
+                "spaceAfter": 2,
+                "keepNext": true,
+                "runs": [
+                    {
+                        "text": "PRICING MODEL 02",
+                        "bold": true,
+                        "size": 8.5,
+                        "color": "#C25E2E",
+                        "letterSpacing": 1.5
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "level": 2,
+                "keepNext": true,
+                "spaceAfter": 4,
+                "runs": [
+                    {
+                        "text": "Monthly care retainer",
+                        "size": 20,
+                        "color": "#1B2F4B"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "keepNext": true,
+                "spaceAfter": 6,
+                "runs": [
+                    {
+                        "text": "20 hours a month for 6 months",
+                        "size": 10,
+                        "color": "#5B6675"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "keepNext": true,
+                "spaceAfter": 14,
+                "lineHeight": 1.4,
+                "runs": [
+                    {
+                        "text": "A reserved block of design and engineering time every month, for improvements, new pages and anything the launch uncovers, with priority support for the site itself.",
+                        "size": 10.5
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "widths": [
+                    50,
+                    12,
+                    18,
+                    20
+                ],
+                "borders": {
+                    "top": {
+                        "style": "none"
+                    },
+                    "right": {
+                        "style": "none"
+                    },
+                    "bottom": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "left": {
+                        "style": "none"
+                    },
+                    "insideH": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "insideV": {
+                        "style": "none"
+                    }
+                },
+                "cellPadding": {
+                    "top": 6,
+                    "bottom": 6,
+                    "left": 8,
+                    "right": 8
+                },
+                "rows": [
+                    {
+                        "header": true,
+                        "cells": [
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "DESCRIPTION",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "QTY",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "UNIT PRICE",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "AMOUNT",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Design and engineering hours",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceBefore": 1,
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "20 hours a month for 6 months",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "120",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$165.00",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$19,800.00",
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Priority support",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceBefore": 1,
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Next-business-day response, uptime monitoring",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "6",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$450.00",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$2,700.00",
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "colSpan": 3,
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Monthly care retainer subtotal",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$22,500.00",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "spaceBefore": 8,
+                "runs": [
+                    {
+                        "text": "Unused hours roll over for one month. Invoiced monthly in advance.",
+                        "size": 8.5,
+                        "color": "#5B6675"
+                    }
+                ]
+            },
+            {
+                "type": "pageBreak"
+            },
+            {
+                "type": "paragraph",
+                "spaceAfter": 2,
+                "keepNext": true,
+                "runs": [
+                    {
+                        "text": "PRICING MODEL 03",
+                        "bold": true,
+                        "size": 8.5,
+                        "color": "#C25E2E",
+                        "letterSpacing": 1.5
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "level": 2,
+                "keepNext": true,
+                "spaceAfter": 4,
+                "runs": [
+                    {
+                        "text": "Platform licence",
+                        "size": 20,
+                        "color": "#1B2F4B"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "keepNext": true,
+                "spaceAfter": 6,
+                "runs": [
+                    {
+                        "text": "120 editor seats for 12 months, priced by volume",
+                        "size": 10,
+                        "color": "#5B6675"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "keepNext": true,
+                "spaceAfter": 14,
+                "lineHeight": 1.4,
+                "runs": [
+                    {
+                        "text": "The editing platform your team works in, billed per editor seat per month. The seat price falls as the team grows; the break this quote uses is shown beside the line.",
+                        "size": 10.5
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "widths": [
+                    50,
+                    12,
+                    18,
+                    20
+                ],
+                "borders": {
+                    "top": {
+                        "style": "none"
+                    },
+                    "right": {
+                        "style": "none"
+                    },
+                    "bottom": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "left": {
+                        "style": "none"
+                    },
+                    "insideH": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "insideV": {
+                        "style": "none"
+                    }
+                },
+                "cellPadding": {
+                    "top": 6,
+                    "bottom": 6,
+                    "left": 8,
+                    "right": 8
+                },
+                "rows": [
+                    {
+                        "header": true,
+                        "cells": [
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "DESCRIPTION",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "QTY",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "UNIT PRICE",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#1B2F4B",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "AMOUNT",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#FFFFFF",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Editor seats",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceBefore": 1,
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "120 seats x 12 months",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "1,440",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$9.75",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$14,040.00",
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Hosting, backups and monitoring",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceBefore": 1,
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Managed hosting, per month",
+                                                "size": 8.5,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "12",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$290.00",
+                                                "size": 9.5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$3,480.00",
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "colSpan": 3,
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Platform licence subtotal",
+                                                "bold": true,
+                                                "size": 9.5,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "shading": "#F3F5F8",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "align": "right",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "$17,520.00",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "spaceBefore": 8,
+                "runs": [
+                    {
+                        "text": "Seat price breaks: 1-49 seats $12.50, 50-99 $11.00, 100-499 $9.75, 500-999 $8.40, 1,000+ $7.20 per seat per month.",
+                        "size": 8.5,
+                        "color": "#5B6675"
+                    }
+                ]
+            },
+            {
+                "type": "pageBreak"
+            },
+            {
+                "type": "heading",
+                "level": 2,
+                "keepNext": true,
+                "spaceAfter": 8,
+                "runs": [
+                    {
+                        "text": "Terms",
+                        "size": 16,
+                        "color": "#1B2F4B"
+                    }
+                ]
+            },
+            {
+                "type": "list",
+                "ordered": true,
+                "items": [
+                    {
+                        "runs": [
+                            {
+                                "text": "This quote is valid for 30 days from the date of issue.",
+                                "size": 10
+                            }
+                        ]
+                    },
+                    {
+                        "runs": [
+                            {
+                                "text": "Prices are in US dollars. Sales tax is shown separately and charged where it applies.",
+                                "size": 10
+                            }
+                        ]
+                    },
+                    {
+                        "runs": [
+                            {
+                                "text": "Invoices are payable within 30 days. Late payments may pause scheduled work.",
+                                "size": 10
+                            }
+                        ]
+                    },
+                    {
+                        "runs": [
+                            {
+                                "text": "Scope changes are agreed in writing, with their price, before work on them starts.",
+                                "size": 10
+                            }
+                        ]
+                    },
+                    {
+                        "runs": [
+                            {
+                                "text": "You own the finished design and code on final payment; the platform licence is a subscription.",
+                                "size": 10
+                            }
+                        ]
+                    },
+                    {
+                        "runs": [
+                            {
+                                "text": "Either party may end the retainer or the licence with 30 days written notice.",
+                                "size": 10
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "level": 2,
+                "keepNext": true,
+                "spaceBefore": 20,
+                "spaceAfter": 6,
+                "runs": [
+                    {
+                        "text": "Acceptance",
+                        "size": 16,
+                        "color": "#1B2F4B"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "keepNext": true,
+                "spaceAfter": 14,
+                "lineHeight": 1.4,
+                "runs": [
+                    {
+                        "text": "To accept this quote, sign below or sign online. The total of ",
+                        "size": 10
+                    },
+                    {
+                        "text": "$91,492.90",
+                        "bold": true,
+                        "size": 10
+                    },
+                    {
+                        "text": " is valid until 17 December 2026.",
+                        "size": 10
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "widths": [
+                    46,
+                    8,
+                    46
+                ],
+                "borders": {
+                    "top": {
+                        "style": "none"
+                    },
+                    "right": {
+                        "style": "none"
+                    },
+                    "bottom": {
+                        "style": "none"
+                    },
+                    "left": {
+                        "style": "none"
+                    },
+                    "insideH": {
+                        "style": "none"
+                    },
+                    "insideV": {
+                        "style": "none"
+                    }
+                },
+                "cellPadding": {
+                    "top": 0,
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0
+                },
+                "rows": [
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "ACCEPTED FOR EXAMPLE CORP",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#C25E2E",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "FOR FIELDWORK STUDIO",
+                                                "bold": true,
+                                                "size": 8,
+                                                "color": "#C25E2E",
+                                                "letterSpacing": 1
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "padding": {
+                                    "top": 40,
+                                    "bottom": 4,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "borders": {
+                                    "bottom": {
+                                        "style": "single",
+                                        "width": 0.75,
+                                        "color": "#1B2F4B"
+                                    }
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 40,
+                                    "bottom": 4,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "borders": {
+                                    "bottom": {
+                                        "style": "single",
+                                        "width": 0.75,
+                                        "color": "#1B2F4B"
+                                    }
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "padding": {
+                                    "top": 3,
+                                    "bottom": 14,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Signature",
+                                                "size": 8,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 3,
+                                    "bottom": 14,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Signature",
+                                                "size": 8,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "padding": {
+                                    "top": 0,
+                                    "bottom": 4,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "borders": {
+                                    "bottom": {
+                                        "style": "single",
+                                        "width": 0.5,
+                                        "color": "#C3CBD6"
+                                    }
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Jordan Lee",
+                                                "size": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 0,
+                                    "bottom": 4,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "borders": {
+                                    "bottom": {
+                                        "style": "single",
+                                        "width": 0.5,
+                                        "color": "#C3CBD6"
+                                    }
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Avery Quinn, Principal",
+                                                "size": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "padding": {
+                                    "top": 3,
+                                    "bottom": 14,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Name and title",
+                                                "size": 8,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 3,
+                                    "bottom": 14,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Name and title",
+                                                "size": 8,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "padding": {
+                                    "top": 0,
+                                    "bottom": 4,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "borders": {
+                                    "bottom": {
+                                        "style": "single",
+                                        "width": 0.5,
+                                        "color": "#C3CBD6"
+                                    }
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 0,
+                                    "bottom": 4,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "borders": {
+                                    "bottom": {
+                                        "style": "single",
+                                        "width": 0.5,
+                                        "color": "#C3CBD6"
+                                    }
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "17 November 2026",
+                                                "size": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "cells": [
+                            {
+                                "padding": {
+                                    "top": 3,
+                                    "bottom": 0,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Date",
+                                                "size": 8,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": " ",
+                                                "size": 4
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "padding": {
+                                    "top": 3,
+                                    "bottom": 0,
+                                    "left": 0,
+                                    "right": 0
+                                },
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Date",
+                                                "size": 8,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "table",
+                "widths": [
+                    18,
+                    82
+                ],
+                "borders": {
+                    "top": {
+                        "style": "single",
+                        "width": 0.5,
+                        "color": "#D5DBE3"
+                    },
+                    "right": {
+                        "style": "none"
+                    },
+                    "bottom": {
+                        "style": "none"
+                    },
+                    "left": {
+                        "style": "none"
+                    },
+                    "insideH": {
+                        "style": "none"
+                    },
+                    "insideV": {
+                        "style": "none"
+                    }
+                },
+                "cellPadding": {
+                    "top": 14,
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 10
+                },
+                "rows": [
+                    {
+                        "cells": [
+                            {
+                                "blocks": [
+                                    {
+                                        "type": "image",
+                                        "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeAQMAAABoqSz0AAAABlBMVEX///8AAABVwtN+AAABSUlEQVR42u2X0Q2EMAxDkTpAR8rqjMQAlXJ23KqgW8BIRBUHfXyQnuOmx/HFF++MZJwY7YqW5+h8Hq6Qv/3kWxdG6N4X9hwdeeA2wHGPtMwhkmjK4xUw8x2wZIIJXFvyxT8NGUGVIObW+K9PI7gTgqj3kpvCUUpB8cHb6BnFhy3siWujTFLXuxm7QW4aeOS+kVWC+RC1GSxv41PxKsQrbCG0jIkJZcmYcYVsHA58Oxe+6U/YMvGDLLuScxmGhi3kl1cHwVZiukXYQu1v2utWEltDblBa1ty0t12CdlBtztRy1aIq0hSW9ULape7ZBdtCLjObMiw/5SyN28L1CmtRSdyaCDs4j5jzGBTPY5AdnCpG77CanbENww/WMUhOnIrLHvLzoy0yvGH5cUgv7dEZm8G1140S+Hj2mm5wlWDoDFTeFocr/OKLt8UPzOwZW8VdNwIAAAAASUVORK5CYII=",
+                                        "widthPx": 96,
+                                        "heightPx": 96,
+                                        "alt": "QR code for quote Q-2026-0142"
+                                    }
+                                ]
+                            },
+                            {
+                                "valign": "center",
+                                "blocks": [
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 2,
+                                        "runs": [
+                                            {
+                                                "text": "Review and sign online",
+                                                "bold": true,
+                                                "size": 10,
+                                                "color": "#1B2F4B"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "paragraph",
+                                        "spaceAfter": 0,
+                                        "runs": [
+                                            {
+                                                "text": "Scan the code, or visit quotes.example.com/Q-2026-0142. The signed copy carries a completion certificate that anyone can verify.",
+                                                "size": 9,
+                                                "color": "#5B6675"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

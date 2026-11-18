@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab82303db567062ffb0bb603fcc3d1b4",
+    "content-hash": "c87200d04a84814d8156621a450f6e19",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4174,6 +4174,65 @@
             "time": "2026-11-04T22:02:30+00:00"
         },
         {
+            "name": "particle-academy/fancy-formula",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-formula.git",
+                "reference": "9dcef871f0703167923f21a8720c44243d78e2d8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-formula/zipball/9dcef871f0703167923f21a8720c44243d78e2d8",
+                "reference": "9dcef871f0703167923f21a8720c44243d78e2d8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.26",
+                "particle-academy/fancy-conformance": "0.39.0",
+                "particle-academy/holy-sheet": "^2.11.3",
+                "pestphp/pest": "^3.0|^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FancyFormula\\": "php/src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "A deterministic spreadsheet-formula engine with Google Sheets semantics. Formulas are code, inputs are always values, and every output carries a trace of what it read. Malformed input throws with a stable code, a spreadsheet error is a value, and a broken limit aborts: the three never collapse into one another.",
+            "homepage": "https://github.com/Particle-Academy/fancy-formula",
+            "keywords": [
+                "cross-language",
+                "deterministic",
+                "evaluator",
+                "formula",
+                "google-sheets",
+                "particle-academy",
+                "pricing",
+                "sandbox",
+                "spreadsheet"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-formula/issues",
+                "source": "https://github.com/Particle-Academy/fancy-formula"
+            },
+            "time": "2026-10-29T07:42:47+00:00",
+            "published-time": "2026-10-29T07:43:18+00:00"
+        },
+        {
             "name": "particle-academy/fancy-heuristics",
             "version": "v0.6.0",
             "source": {
@@ -4317,6 +4376,66 @@
                 "source": "https://github.com/Particle-Academy/fancy-mlm-php"
             },
             "time": "2026-11-05T02:26:20+00:00"
+        },
+        {
+            "name": "particle-academy/fancy-qr",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-qr.git",
+                "reference": "e8eca2258577f11b27fe03634e2d46ce69e6b810"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-qr/zipball/e8eca2258577f11b27fe03634e2d46ce69e6b810",
+                "reference": "e8eca2258577f11b27fe03634e2d46ce69e6b810",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zlib": "*",
+                "php": "^8.4"
+            },
+            "require-dev": {
+                "particle-academy/fine-print": "^0.6.1",
+                "pestphp/pest": "^5.0"
+            },
+            "suggest": {
+                "particle-academy/fine-print": "To write the printable page from QrCode::finePrintDocument() as a PDF."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FancyQr\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "QR codes on the server, as SVG and PNG, with zero dependencies: a PHP port of react-fancy's own encoder, so the server and the browser draw the same symbol for the same input. A printable page goes through fine-print. Hostile input is refused from its length and the work is bounded.",
+            "homepage": "https://github.com/Particle-Academy/fancy-qr",
+            "keywords": [
+                "barcode",
+                "fancy-ui",
+                "particle-academy",
+                "png",
+                "qr",
+                "qr-code",
+                "qrcode",
+                "svg"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-qr/issues",
+                "source": "https://github.com/Particle-Academy/fancy-qr"
+            },
+            "time": "2026-11-05T02:56:39+00:00",
+            "published-time": "2026-11-05T03:24:18+00:00"
         },
         {
             "name": "particle-academy/fancy-seo",

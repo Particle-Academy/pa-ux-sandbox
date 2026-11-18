@@ -131,12 +131,20 @@ final class FeatureSites
         'documents' => [
             'course' => 'fancy-documents',
             'name' => 'Documents',
-            'tagline' => 'xlsx, pptx and docx writers and readers for PHP, Node and Python, plus PDF and e-signature for PHP.',
+            'tagline' => 'Write and read xlsx, pptx, docx and PDF from JSON, fill templates, price with formulas, add QR codes, view pages in the browser and collect e-signatures.',
             'icon' => 'file-text',
             'component' => 'Features/Documents/Index',
             'theme' => ['accent' => '#2563eb', 'accentDark' => '#60a5fa', 'surface' => '#eff6ff', 'surfaceDark' => '#0a1124', 'font' => 'serif'],
-            // fancy-sign joined 2026-11-18 (owner, 2026-11-13: signing is a Documents feature).
-            'members' => ['family:holy-sheet', 'family:dark-slide', 'family:last-word', 'family:fine-print', 'family:fancy-sign'],
+            // fancy-sign joined 2026-11-18 (owner, 2026-11-13: signing is a
+            // Documents feature). Every package in PackageRegistry's `documents`
+            // group is a member; DocumentsFeatureSiteTest fails on one left out,
+            // so a new member cannot be forgotten. The two commons are internal
+            // shared cores and appear under "Built on".
+            'members' => [
+                'family:holy-sheet', 'family:dark-slide', 'family:last-word', 'last-word-ui', 'family:fine-print',
+                'fancy-template', 'fancy-formula', 'family:fancy-qr', 'family:fancy-sign',
+                'fancy-doc-commons', 'fancy-file-commons',
+            ],
             'bridges' => [],
         ],
         // Every media component the kit ships (owner, 2026-11-14): react-fancy's

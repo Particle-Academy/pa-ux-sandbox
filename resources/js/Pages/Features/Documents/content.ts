@@ -1,6 +1,94 @@
 import type { FeatureTourItem } from "../shared/FeatureTour";
 
 /**
+ * The capabilities the page gathers, each linking to its live section. `slugs`
+ * are registry slugs of the packages that provide it; the page shows their
+ * Node and Python twins as chips from the Feature's members (a twin is a
+ * member named `<slug>-js` or `<slug>-py`), so a newly published twin appears
+ * with no edit here. DocumentsFeatureSiteTest checks every documents-group
+ * package is named in this list or under BUILT_ON.
+ */
+export type DocumentsCapability = {
+    anchor: string;
+    icon: string;
+    title: string;
+    body: string;
+    slugs: string[];
+};
+
+export const DOCUMENTS_CAPABILITIES: DocumentsCapability[] = [
+    {
+        anchor: "templates",
+        icon: "file-stack",
+        title: "Templates",
+        body: "Fill a JSON template with data: tokens and filters, a row per item with $each, a section per item with $spread. One package for PHP, Node and Python.",
+        slugs: ["fancy-template"],
+    },
+    {
+        anchor: "templates",
+        icon: "file-text",
+        title: "PDF",
+        body: "Write, read and render PDFs in pure PHP, with a guard on text an agent reads.",
+        slugs: ["fine-print"],
+    },
+    {
+        anchor: "documents-demo",
+        icon: "file-type",
+        title: "Word",
+        body: "docx writer and reader on one JSON model, with markdown both ways.",
+        slugs: ["last-word"],
+    },
+    {
+        anchor: "documents-demo",
+        icon: "presentation",
+        title: "Slides",
+        body: "pptx writer and reader with a layout lint.",
+        slugs: ["dark-slide"],
+    },
+    {
+        anchor: "templates",
+        icon: "sheet",
+        title: "Spreadsheets",
+        body: "xlsx writer and reader with themes, totals and typed columns.",
+        slugs: ["holy-sheet"],
+    },
+    {
+        anchor: "viewers",
+        icon: "book-open",
+        title: "Viewers",
+        body: "DocViewer draws last-word JSON as printed pages in React.",
+        slugs: ["last-word-ui"],
+    },
+    {
+        anchor: "formulas",
+        icon: "sigma",
+        title: "Formulas",
+        body: "Spreadsheet formulas with Google Sheets semantics and a trace of every lookup.",
+        slugs: ["fancy-formula"],
+    },
+    {
+        anchor: "codes",
+        icon: "qr-code",
+        title: "Codes",
+        body: "QR codes on the server as SVG and PNG, identical to react-fancy's QrCode.",
+        slugs: ["fancy-qr"],
+    },
+    {
+        anchor: "signing",
+        icon: "signature",
+        title: "E-signing",
+        body: "Envelopes, one-time codes, a hash-chained audit trail and a verifiable certificate.",
+        slugs: ["fancy-sign", "fancy-sign-ui"],
+    },
+];
+
+/** The shared cores the document packages are built on. Internal: nothing to install directly. */
+export const BUILT_ON: Array<{ slug: string; body: string }> = [
+    { slug: "fancy-doc-commons", body: "The shared pure core for the document and surface packages: one node, tree and operation model." },
+    { slug: "fancy-file-commons", body: "The shared pure core for the file packages: editors, viewers, writers and diff." },
+];
+
+/**
  * The Documents tour. Each line is checkable against the shipped packages;
  * the source is named beside it (repos holy-sheet*, dark-slide*, last-word*,
  * fine-print).

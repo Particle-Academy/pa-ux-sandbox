@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Badge, Button, Callout, Card, Heading, Tabs, Text, useTheme } from "@particle-academy/react-fancy";
+import { Link } from "@inertiajs/react";
+import { Badge, Button, Callout, Card, Grid, Heading, Icon, Tabs, Text, useTheme } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 import { DemoFrame } from "../shared/DemoFrame";
 import { FeatureCta } from "../shared/FeatureCta";
@@ -10,7 +11,11 @@ import { HowItFits } from "../shared/HowItFits";
 import { InstallSteps } from "../shared/InstallSteps";
 import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeatureMember, FeaturePageProps } from "../shared/types";
-import { DOCUMENTS_TOUR } from "./content";
+import { BUILT_ON, DOCUMENTS_CAPABILITIES, DOCUMENTS_TOUR } from "./content";
+import { QrDemo } from "./QrDemo";
+import { QUOTE_DEFAULTS, type QuoteInput } from "./quote";
+import { QuoteStudio } from "./QuoteStudio";
+import { SignDemo } from "./SignDemo";
 import {
     check,
     filenameFor,
@@ -25,16 +30,22 @@ import {
 import { DOCX_SEED, MARKDOWN_SEED, PPTX_SEED, pretty } from "./seeds";
 
 /**
- * /features/documents: the Documents micro-site.
+ * /features/documents: the Documents micro-site. A Feature gathers
+ * CAPABILITIES across packages (owner, 2026-11-13), so every package in
+ * PackageRegistry's `documents` group is a member and has a section here:
  *
- * Identity: a document "dossier". Serif display type, ink-blue, and the four
- * product families shown as file tabs with their own extension colour, since
- * this Feature is four products that share one way of working.
+ * - Templates, Viewers, Formulas (./QuoteStudio): a branded quote, priced by
+ *   fancy-formula, filled by fancy-template, drawn by last-word-ui's DocViewer
+ *   and downloadable as PDF (fine-print), DOCX (last-word) and XLSX
+ *   (holy-sheet).
+ * - JSON to Word and PowerPoint in the browser (./generate.ts): last-word and
+ *   dark-slide's npm writers, with validate / describe / lint as you type.
+ * - Codes (./QrDemo): fancy-qr on the server beside react-fancy's QrCode.
+ * - E-signing (./SignDemo): fancy-sign-ui's ceremony against an in-page
+ *   backend (./sign.ts), so nothing is emailed or stored.
  *
- * The demo runs the installed npm writers in the browser (./generate.ts):
- * last-word for .docx and dark-slide for .pptx. The agent's JSON is editable
- * beside the result; validate / describe / lint run on every keystroke, and
- * the generated file is read back with the same package's reader.
+ * Identity: a document "dossier". Serif display type, ink-blue, and the file
+ * families shown as tabs with their own extension colour.
  */
 
 const FAMILIES = [
@@ -53,6 +64,7 @@ export default function DocumentsFeature({ feature, versions }: FeaturePageProps
     const [sources, setSources] = useState<Record<DocFormat, string>>(SEEDS);
     const [markdown, setMarkdown] = useState(MARKDOWN_SEED);
     const [output, setOutput] = useState<Output | null>(null);
+    const [quote, setQuote] = useState<QuoteInput>(QUOTE_DEFAULTS);
 
     const json = sources[format];
     const result = useMemo(() => check(format, json), [format, json]);
@@ -96,20 +108,28 @@ export default function DocumentsFeature({ feature, versions }: FeaturePageProps
 
     // InstallSteps lists the Node writers (registry data), the runtime this demo uses.
     const nodeWriters = feature.members.filter((m: FeatureMember) => m.language === "Node / TypeScript");
+    const bySlug = new Map(feature.members.map((m: FeatureMember) => [m.slug, m]));
+    // A twin is a member named <slug>-js or <slug>-py: data, not a typed list.
+    const twinsOf = (slug: string) => feature.members.filter((m: FeatureMember) => m.slug === `${slug}-js` || m.slug === `${slug}-py`);
 
     return (
         <FeatureShell feature={feature}>
             <div className="docs-site">
                 <FeatureHero
                     feature={feature}
-                    eyebrow="Feature · Four file formats"
-                    title="Documents agents can write and read"
-                    lede="Spreadsheets, decks and Word documents from plain JSON, in PHP, Node and Python, plus PDF in PHP. Every file can be read back into the same model."
+                    eyebrow="Feature · Documents, end to end"
+                    title="Documents agents can write, read and get signed"
+                    lede="Spreadsheets, decks, Word documents and PDFs from plain JSON, in PHP, Node and Python. Fill templates, price with formulas, add QR codes, show the pages in the browser and collect signatures."
                     languages={feature.languages}
                     actions={
-                        <Button href="#documents-demo" icon="file-down" color="blue">
-                            Generate a file below
-                        </Button>
+                        <>
+                            <Button href="#templates" icon="file-down" color="blue">
+                                Generate a quote
+                            </Button>
+                            <Button href="#signing" variant="ghost" icon="signature">
+                                Sign it
+                            </Button>
+                        </>
                     }
                 >
                     <ul className="docs-tabs" aria-label="The four product families">
@@ -122,7 +142,63 @@ export default function DocumentsFeature({ feature, versions }: FeaturePageProps
                     </ul>
                 </FeatureHero>
 
-                <div id="documents-demo" className="docs-site__anchor">
+                <section className="feature-section" aria-labelledby="docs-capabilities-title">
+                    <Heading as="h2" size="lg" weight="semibold" className="feature-display" id="docs-capabilities-title">
+                        What you can do with documents
+                    </Heading>
+                    <Grid cols={3} gap="md" className="docs-capabilities">
+                        {DOCUMENTS_CAPABILITIES.map((cap) => (
+                            <Card key={cap.title} variant="outlined" padding="sm" className="docs-capability" data-documents-capability={cap.title}>
+                                <a href={`#${cap.anchor}`} className="docs-capability__title">
+                                    <Icon name={cap.icon} />
+                                    <Text as="span" weight="semibold">
+                                        {cap.title}
+                                    </Text>
+                                </a>
+                                <Text as="p" size="sm" color="muted">
+                                    {cap.body}
+                                </Text>
+                                <div className="docs-capability__chips">
+                                    {cap.slugs.map((slug) => {
+                                        const member = bySlug.get(slug);
+                                        return member ? (
+                                            <Link key={slug} href={member.href} data-package-chip={slug}>
+                                                <Badge variant="soft" color="blue">
+                                                    {member.name} · {member.language}
+                                                </Badge>
+                                            </Link>
+                                        ) : null;
+                                    })}
+                                    {cap.slugs.flatMap(twinsOf).length > 0 && (
+                                        <Text as="span" size="sm" color="muted">
+                                            also in
+                                        </Text>
+                                    )}
+                                    {cap.slugs.flatMap(twinsOf).map((twin) => (
+                                        <Link key={twin.slug} href={twin.href} data-package-chip={twin.slug}>
+                                            <Badge variant="outline" color="zinc">
+                                                {twin.language === "Node / TypeScript" ? "Node" : twin.language}
+                                            </Badge>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </Card>
+                        ))}
+                    </Grid>
+                </section>
+
+                <QuoteStudio input={quote} onInput={setQuote} />
+
+                <section id="documents-demo" className="feature-section docs-site__anchor">
+                    <Heading as="h2" size="lg" weight="semibold" className="feature-display">
+                        From an agent's JSON, in your browser
+                    </Heading>
+                    <Text as="p" color="muted" className="feature-section__intro">
+                        last-word and dark-slide's Node writers are universal, so they run in this page. Edit the JSON an agent would
+                        emit and download the file it writes.
+                    </Text>
+                </section>
+                <div className="docs-site__anchor">
                     <DemoFrame
                         id="documents"
                         label="Generate a file in your browser"
@@ -275,24 +351,72 @@ export default function DocumentsFeature({ feature, versions }: FeaturePageProps
                             </section>
 
                             <Callout color="blue" icon={null}>
-                                This page writes Word and PowerPoint because those Node writers are what the showcase installs.
+                                This panel writes Word and PowerPoint because those Node writers are what the showcase installs.
                                 Holy Sheet's Node writer (<code className="feature-code">@particle-academy/holy-sheet</code>)
-                                writes .xlsx the same way, and FinePrint is a PHP package, so neither runs in this demo.
+                                writes .xlsx the same way. The quote above gets its PDF and .xlsx from the PHP packages on this
+                                server.
                             </Callout>
                         </div>
                     </DemoFrame>
                 </div>
 
+                <section id="codes" className="feature-section docs-site__anchor">
+                    <Heading as="h2" size="lg" weight="semibold" className="feature-display">
+                        Codes: QR on the server and in the browser
+                    </Heading>
+                    <Text as="p" color="muted" className="feature-section__intro">
+                        fancy-qr encodes QR codes in PHP with no dependencies, as SVG, PNG or a block for a fine-print document,
+                        and draws the same symbol as react-fancy's QrCode for the same value, byte for byte.
+                    </Text>
+                </section>
+                <QrDemo />
+
+                <section id="signing" className="feature-section docs-site__anchor">
+                    <Heading as="h2" size="lg" weight="semibold" className="feature-display">
+                        E-signing: send it, sign it, prove it
+                    </Heading>
+                    <Text as="p" color="muted" className="feature-section__intro">
+                        fancy-sign runs envelopes on Laravel: one-time codes to view and to sign, consent, a hash-chained audit
+                        trail, a sealed final PDF and a certificate of completion anyone can verify. fancy-sign-ui is the React side,
+                        and the signer's ceremony below is its real component, signing the quote from the Templates section.
+                    </Text>
+                </section>
+                <SignDemo input={quote} />
+
                 <FeatureTour
                     title="What it does"
-                    intro="Four product families, one way of working: an agent emits JSON, the package checks it, writes the file and reads files back."
+                    intro="One way of working across every format: an agent emits JSON, the package checks it, writes the file and reads files back."
                     items={DOCUMENTS_TOUR}
                 />
+
+                <section className="feature-section" aria-labelledby="docs-built-on-title">
+                    <Heading as="h2" size="lg" weight="semibold" className="feature-display" id="docs-built-on-title">
+                        Built on
+                    </Heading>
+                    <Text as="p" color="muted" className="feature-section__intro">
+                        Two shared cores sit under the document packages. You get them with the packages that use them.
+                    </Text>
+                    <Grid cols={2} gap="md">
+                        {BUILT_ON.map((core) => {
+                            const member = bySlug.get(core.slug);
+                            return (
+                                <Card key={core.slug} variant="outlined" padding="sm" data-documents-built-on={core.slug}>
+                                    <Text as="p" weight="semibold">
+                                        {member ? <Link href={member.href}>{member.name}</Link> : core.slug}
+                                    </Text>
+                                    <Text as="p" size="sm" color="muted">
+                                        {core.body}
+                                    </Text>
+                                </Card>
+                            );
+                        })}
+                    </Grid>
+                </section>
 
                 <HowItFits
                     members={feature.members}
                     bridges={feature.bridges}
-                    intro="Pick the package for the runtime you are in; the schema is the same in each. Holy Sheet, Dark Slide and Last Word each have a PHP, Node and Python mirror, and FinePrint is PHP."
+                    intro="Pick the package for the runtime you are in; the schema is the same in each. Holy Sheet, Dark Slide and Last Word each have a PHP, Node and Python mirror, FinePrint has PHP and Python, and fancy-template ships all three from one package."
                 />
                 <InstallSteps
                     members={nodeWriters}

@@ -1,0 +1,2048 @@
+{
+  "fancyTemplate": 1,
+  "writer": "last-word",
+  "description": "A branded quote and proposal: a letterhead band on the first page and a running header after it, a title block, an at-a-glance summary, one section per pricing model ($each with $spread), a lines table per model (a nested $each) with its subtotal, the totals, the terms, a signature block and a QR code. last-word writes it as .docx; fine-print writes the same document as a PDF.",
+  "variables": {
+    "quote": {
+      "type": "object",
+      "required": true,
+      "properties": {
+        "number": {
+          "type": "string",
+          "required": true,
+          "maxLength": 32
+        },
+        "title": {
+          "type": "string",
+          "required": true,
+          "maxLength": 120
+        },
+        "issuedAt": {
+          "type": "date",
+          "required": true
+        },
+        "validUntil": {
+          "type": "date",
+          "required": true
+        },
+        "url": {
+          "type": "string",
+          "required": true,
+          "maxLength": 200
+        }
+      },
+      "example": {
+        "number": "Q-2026-0142",
+        "title": "Website platform rebuild",
+        "issuedAt": "2026-11-17",
+        "validUntil": "2026-12-17",
+        "url": "quotes.example.com/Q-2026-0142"
+      }
+    },
+    "seller": {
+      "type": "object",
+      "required": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "maxLength": 80
+        },
+        "tagline": {
+          "type": "string",
+          "required": true,
+          "maxLength": 120
+        },
+        "address": {
+          "type": "string",
+          "required": true,
+          "maxLength": 160
+        },
+        "email": {
+          "type": "string",
+          "required": true,
+          "maxLength": 120
+        },
+        "phone": {
+          "type": "string",
+          "required": true,
+          "maxLength": 40
+        },
+        "signer": {
+          "type": "string",
+          "required": true,
+          "maxLength": 80
+        },
+        "signerTitle": {
+          "type": "string",
+          "required": true,
+          "maxLength": 80
+        }
+      }
+    },
+    "client": {
+      "type": "object",
+      "required": true,
+      "properties": {
+        "company": {
+          "type": "string",
+          "required": true,
+          "maxLength": 80
+        },
+        "contact": {
+          "type": "string",
+          "required": true,
+          "maxLength": 80
+        }
+      },
+      "example": {
+        "company": "Example Corp",
+        "contact": "Jordan Lee"
+      }
+    },
+    "intro": {
+      "type": "string",
+      "required": true,
+      "maxLength": 1000
+    },
+    "models": {
+      "type": "array",
+      "required": true,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "required": true,
+            "maxLength": 4
+          },
+          "name": {
+            "type": "string",
+            "required": true,
+            "maxLength": 80
+          },
+          "basis": {
+            "type": "string",
+            "required": true,
+            "maxLength": 80
+          },
+          "summary": {
+            "type": "string",
+            "required": true,
+            "maxLength": 600
+          },
+          "note": {
+            "type": "string",
+            "default": "",
+            "maxLength": 300
+          },
+          "lines": {
+            "type": "array",
+            "required": true,
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "required": true,
+                  "maxLength": 120
+                },
+                "detail": {
+                  "type": "string",
+                  "default": "",
+                  "maxLength": 200
+                },
+                "qty": {
+                  "type": "number",
+                  "required": true
+                },
+                "unit": {
+                  "type": "integer",
+                  "required": true,
+                  "description": "Minor units (cents)."
+                },
+                "amount": {
+                  "type": "integer",
+                  "required": true,
+                  "description": "Minor units (cents)."
+                }
+              }
+            }
+          },
+          "subtotal": {
+            "type": "integer",
+            "required": true,
+            "description": "Minor units (cents)."
+          }
+        }
+      }
+    },
+    "subtotal": {
+      "type": "integer",
+      "required": true
+    },
+    "taxLabel": {
+      "type": "string",
+      "required": true,
+      "maxLength": 40
+    },
+    "tax": {
+      "type": "integer",
+      "required": true
+    },
+    "total": {
+      "type": "integer",
+      "required": true
+    },
+    "terms": {
+      "type": "array",
+      "required": true,
+      "maxItems": 12,
+      "items": {
+        "type": "string",
+        "maxLength": 400
+      }
+    },
+    "qr": {
+      "type": "image",
+      "required": true,
+      "maxLength": 200000
+    }
+  },
+  "document": {
+    "title": "{{ quote.title }} -- quote {{ quote.number }}",
+    "page": {
+      "size": "letter",
+      "margins": {
+        "top": 100,
+        "bottom": 80,
+        "left": 64,
+        "right": 64,
+        "header": 30,
+        "footer": 30
+      },
+      "firstHeader": {
+        "blocks": [
+          {
+            "type": "table",
+            "widths": [
+              62,
+              38
+            ],
+            "borders": {
+              "top": {
+                "style": "none"
+              },
+              "right": {
+                "style": "none"
+              },
+              "bottom": {
+                "style": "none"
+              },
+              "left": {
+                "style": "none"
+              },
+              "insideH": {
+                "style": "none"
+              },
+              "insideV": {
+                "style": "none"
+              }
+            },
+            "rows": [
+              {
+                "cells": [
+                  {
+                    "shading": "#1B2F4B",
+                    "padding": {
+                      "top": 10,
+                      "bottom": 10,
+                      "left": 14,
+                      "right": 8
+                    },
+                    "valign": "center",
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "FIELDWORK",
+                            "bold": true,
+                            "size": 15,
+                            "color": "#FFFFFF",
+                            "letterSpacing": 2
+                          },
+                          {
+                            "text": "  STUDIO",
+                            "size": 15,
+                            "color": "#E9A27C",
+                            "letterSpacing": 2
+                          }
+                        ]
+                      },
+                      {
+                        "type": "paragraph",
+                        "spaceBefore": 2,
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ seller.tagline }}",
+                            "size": 8,
+                            "color": "#C9D3E0"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "shading": "#1B2F4B",
+                    "padding": {
+                      "top": 10,
+                      "bottom": 10,
+                      "left": 8,
+                      "right": 14
+                    },
+                    "valign": "center",
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "PROPOSAL & QUOTE",
+                            "bold": true,
+                            "size": 9,
+                            "color": "#E9A27C",
+                            "letterSpacing": 1.5
+                          }
+                        ]
+                      },
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceBefore": 2,
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ quote.number }}",
+                            "size": 9,
+                            "color": "#FFFFFF"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "header": {
+        "blocks": [
+          {
+            "type": "table",
+            "widths": [
+              60,
+              40
+            ],
+            "borders": {
+              "top": {
+                "style": "none"
+              },
+              "right": {
+                "style": "none"
+              },
+              "bottom": {
+                "style": "single",
+                "width": 1,
+                "color": "#1B2F4B"
+              },
+              "left": {
+                "style": "none"
+              },
+              "insideH": {
+                "style": "none"
+              },
+              "insideV": {
+                "style": "none"
+              }
+            },
+            "rows": [
+              {
+                "cells": [
+                  {
+                    "padding": {
+                      "top": 0,
+                      "bottom": 6,
+                      "left": 0,
+                      "right": 0
+                    },
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "FIELDWORK",
+                            "bold": true,
+                            "size": 10,
+                            "color": "#1B2F4B",
+                            "letterSpacing": 1.5
+                          },
+                          {
+                            "text": "  STUDIO",
+                            "size": 10,
+                            "color": "#C25E2E",
+                            "letterSpacing": 1.5
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "padding": {
+                      "top": 0,
+                      "bottom": 6,
+                      "left": 0,
+                      "right": 0
+                    },
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "Quote {{ quote.number }}  |  {{ client.company }}",
+                            "size": 8,
+                            "color": "#5B6675"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "footer": {
+        "blocks": [
+          {
+            "type": "table",
+            "widths": [
+              75,
+              25
+            ],
+            "borders": {
+              "top": {
+                "style": "single",
+                "width": 0.5,
+                "color": "#D5DBE3"
+              },
+              "right": {
+                "style": "none"
+              },
+              "bottom": {
+                "style": "none"
+              },
+              "left": {
+                "style": "none"
+              },
+              "insideH": {
+                "style": "none"
+              },
+              "insideV": {
+                "style": "none"
+              }
+            },
+            "rows": [
+              {
+                "cells": [
+                  {
+                    "padding": {
+                      "top": 6,
+                      "bottom": 0,
+                      "left": 0,
+                      "right": 0
+                    },
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ seller.name }}  |  {{ seller.address }}  |  {{ seller.email }}  |  {{ seller.phone }}",
+                            "size": 7.5,
+                            "color": "#5B6675"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "padding": {
+                      "top": 6,
+                      "bottom": 0,
+                      "left": 0,
+                      "right": 0
+                    },
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "Page {page} of {pages}",
+                            "size": 7.5,
+                            "color": "#5B6675"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "firstFooter": {
+        "blocks": [
+          {
+            "type": "table",
+            "widths": [
+              75,
+              25
+            ],
+            "borders": {
+              "top": {
+                "style": "single",
+                "width": 0.5,
+                "color": "#D5DBE3"
+              },
+              "right": {
+                "style": "none"
+              },
+              "bottom": {
+                "style": "none"
+              },
+              "left": {
+                "style": "none"
+              },
+              "insideH": {
+                "style": "none"
+              },
+              "insideV": {
+                "style": "none"
+              }
+            },
+            "rows": [
+              {
+                "cells": [
+                  {
+                    "padding": {
+                      "top": 6,
+                      "bottom": 0,
+                      "left": 0,
+                      "right": 0
+                    },
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ seller.name }}  |  {{ seller.address }}  |  {{ seller.email }}  |  {{ seller.phone }}",
+                            "size": 7.5,
+                            "color": "#5B6675"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "padding": {
+                      "top": 6,
+                      "bottom": 0,
+                      "left": 0,
+                      "right": 0
+                    },
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "Page {page} of {pages}",
+                            "size": 7.5,
+                            "color": "#5B6675"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "blocks": [
+      {
+        "type": "paragraph",
+        "spaceBefore": 36,
+        "spaceAfter": 6,
+        "runs": [
+          {
+            "text": "PREPARED FOR {{ client.company | upper }}",
+            "bold": true,
+            "size": 9,
+            "color": "#C25E2E",
+            "letterSpacing": 1.5
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 1,
+        "spaceAfter": 6,
+        "runs": [
+          {
+            "text": "{{ quote.title }}",
+            "size": 30,
+            "color": "#1B2F4B"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "spaceAfter": 22,
+        "runs": [
+          {
+            "text": "A proposal and quote from {{ seller.name }}, for the attention of {{ client.contact }}.",
+            "size": 12,
+            "color": "#5B6675"
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "widths": [
+          25,
+          25,
+          25,
+          25
+        ],
+        "borders": {
+          "top": {
+            "style": "single",
+            "width": 1.5,
+            "color": "#1B2F4B"
+          },
+          "right": {
+            "style": "none"
+          },
+          "bottom": {
+            "style": "single",
+            "width": 0.5,
+            "color": "#D5DBE3"
+          },
+          "left": {
+            "style": "none"
+          },
+          "insideH": {
+            "style": "none"
+          },
+          "insideV": {
+            "style": "none"
+          }
+        },
+        "cellPadding": {
+          "top": 8,
+          "bottom": 2,
+          "left": 0,
+          "right": 8
+        },
+        "rows": [
+          {
+            "cells": [
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "QUOTE NUMBER",
+                        "bold": true,
+                        "size": 7.5,
+                        "color": "#5B6675",
+                        "letterSpacing": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "ISSUED",
+                        "bold": true,
+                        "size": 7.5,
+                        "color": "#5B6675",
+                        "letterSpacing": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "VALID UNTIL",
+                        "bold": true,
+                        "size": 7.5,
+                        "color": "#5B6675",
+                        "letterSpacing": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "PREPARED BY",
+                        "bold": true,
+                        "size": 7.5,
+                        "color": "#5B6675",
+                        "letterSpacing": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "padding": {
+                  "top": 2,
+                  "bottom": 10,
+                  "left": 0,
+                  "right": 8
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ quote.number }}",
+                        "size": 10.5,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 2,
+                  "bottom": 10,
+                  "left": 0,
+                  "right": 8
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ quote.issuedAt | date:\"d MMMM yyyy\" }}",
+                        "size": 10.5,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 2,
+                  "bottom": 10,
+                  "left": 0,
+                  "right": 8
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ quote.validUntil | date:\"d MMMM yyyy\" }}",
+                        "size": 10.5,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 2,
+                  "bottom": 10,
+                  "left": 0,
+                  "right": 8
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ seller.signer }}",
+                        "size": 10.5,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "spaceBefore": 22,
+        "spaceAfter": 10,
+        "lineHeight": 1.4,
+        "runs": [
+          {
+            "text": "Dear {{ client.contact }},",
+            "size": 10.5
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "spaceAfter": 18,
+        "lineHeight": 1.4,
+        "runs": [
+          {
+            "text": "{{ intro }}",
+            "size": 10.5
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "keepNext": true,
+        "spaceAfter": 8,
+        "runs": [
+          {
+            "text": "At a glance",
+            "size": 14,
+            "color": "#1B2F4B"
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "widths": [
+          10,
+          62,
+          28
+        ],
+        "borders": {
+          "top": {
+            "style": "none"
+          },
+          "right": {
+            "style": "none"
+          },
+          "bottom": {
+            "style": "none"
+          },
+          "left": {
+            "style": "none"
+          },
+          "insideH": {
+            "style": "single",
+            "width": 0.5,
+            "color": "#D5DBE3"
+          },
+          "insideV": {
+            "style": "none"
+          }
+        },
+        "cellPadding": {
+          "top": 6,
+          "bottom": 6,
+          "left": 6,
+          "right": 6
+        },
+        "rows": [
+          {
+            "$each": "models",
+            "$as": "model",
+            "cells": [
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ model.number }}",
+                        "bold": true,
+                        "size": 10,
+                        "color": "#C25E2E"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ model.name }}",
+                        "bold": true,
+                        "size": 10,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ model.basis }}",
+                        "size": 8.5,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "valign": "center",
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "align": "right",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ model.subtotal | money:USD }}",
+                        "size": 10,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "colSpan": 2,
+                "shading": "#F3F5F8",
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "align": "right",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "Subtotal",
+                        "size": 9.5,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "shading": "#F3F5F8",
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "align": "right",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ subtotal | money:USD }}",
+                        "size": 10,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "colSpan": 2,
+                "shading": "#F3F5F8",
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "align": "right",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ taxLabel }}",
+                        "size": 9.5,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "shading": "#F3F5F8",
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "align": "right",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ tax | money:USD }}",
+                        "size": 10,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "colSpan": 2,
+                "shading": "#1B2F4B",
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "align": "right",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "TOTAL",
+                        "bold": true,
+                        "size": 10,
+                        "color": "#FFFFFF",
+                        "letterSpacing": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "shading": "#1B2F4B",
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "align": "right",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ total | money:USD }}",
+                        "bold": true,
+                        "size": 12,
+                        "color": "#FFFFFF"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$each": "models",
+        "$as": "model",
+        "$spread": true,
+        "$value": [
+          {
+            "type": "pageBreak"
+          },
+          {
+            "type": "paragraph",
+            "spaceAfter": 2,
+            "keepNext": true,
+            "runs": [
+              {
+                "text": "PRICING MODEL {{ model.number }}",
+                "bold": true,
+                "size": 8.5,
+                "color": "#C25E2E",
+                "letterSpacing": 1.5
+              }
+            ]
+          },
+          {
+            "type": "heading",
+            "level": 2,
+            "keepNext": true,
+            "spaceAfter": 4,
+            "runs": [
+              {
+                "text": "{{ model.name }}",
+                "size": 20,
+                "color": "#1B2F4B"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "keepNext": true,
+            "spaceAfter": 6,
+            "runs": [
+              {
+                "text": "{{ model.basis }}",
+                "size": 10,
+                "color": "#5B6675"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "keepNext": true,
+            "spaceAfter": 14,
+            "lineHeight": 1.4,
+            "runs": [
+              {
+                "text": "{{ model.summary }}",
+                "size": 10.5
+              }
+            ]
+          },
+          {
+            "type": "table",
+            "widths": [
+              50,
+              12,
+              18,
+              20
+            ],
+            "borders": {
+              "top": {
+                "style": "none"
+              },
+              "right": {
+                "style": "none"
+              },
+              "bottom": {
+                "style": "single",
+                "width": 0.5,
+                "color": "#D5DBE3"
+              },
+              "left": {
+                "style": "none"
+              },
+              "insideH": {
+                "style": "single",
+                "width": 0.5,
+                "color": "#D5DBE3"
+              },
+              "insideV": {
+                "style": "none"
+              }
+            },
+            "cellPadding": {
+              "top": 6,
+              "bottom": 6,
+              "left": 8,
+              "right": 8
+            },
+            "rows": [
+              {
+                "header": true,
+                "cells": [
+                  {
+                    "shading": "#1B2F4B",
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "DESCRIPTION",
+                            "bold": true,
+                            "size": 8,
+                            "color": "#FFFFFF",
+                            "letterSpacing": 1
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "shading": "#1B2F4B",
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "QTY",
+                            "bold": true,
+                            "size": 8,
+                            "color": "#FFFFFF",
+                            "letterSpacing": 1
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "shading": "#1B2F4B",
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "UNIT PRICE",
+                            "bold": true,
+                            "size": 8,
+                            "color": "#FFFFFF",
+                            "letterSpacing": 1
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "shading": "#1B2F4B",
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "AMOUNT",
+                            "bold": true,
+                            "size": 8,
+                            "color": "#FFFFFF",
+                            "letterSpacing": 1
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "$each": "model.lines",
+                "$as": "line",
+                "cells": [
+                  {
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ line.description }}",
+                            "bold": true,
+                            "size": 9.5,
+                            "color": "#1B2F4B"
+                          }
+                        ]
+                      },
+                      {
+                        "$if": "line.detail",
+                        "type": "paragraph",
+                        "spaceBefore": 1,
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ line.detail }}",
+                            "size": 8.5,
+                            "color": "#5B6675"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ line.qty | number:0 }}",
+                            "size": 9.5
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ line.unit | money:USD }}",
+                            "size": 9.5
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ line.amount | money:USD }}",
+                            "size": 9.5,
+                            "color": "#1B2F4B"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "cells": [
+                  {
+                    "colSpan": 3,
+                    "shading": "#F3F5F8",
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ model.name }} subtotal",
+                            "bold": true,
+                            "size": 9.5,
+                            "color": "#1B2F4B"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "shading": "#F3F5F8",
+                    "blocks": [
+                      {
+                        "type": "paragraph",
+                        "align": "right",
+                        "spaceAfter": 0,
+                        "runs": [
+                          {
+                            "text": "{{ model.subtotal | money:USD }}",
+                            "bold": true,
+                            "size": 10,
+                            "color": "#1B2F4B"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$if": "model.note",
+            "type": "paragraph",
+            "spaceBefore": 8,
+            "runs": [
+              {
+                "text": "{{ model.note }}",
+                "size": 8.5,
+                "color": "#5B6675"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "pageBreak"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "keepNext": true,
+        "spaceAfter": 8,
+        "runs": [
+          {
+            "text": "Terms",
+            "size": 16,
+            "color": "#1B2F4B"
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "ordered": true,
+        "items": [
+          {
+            "$each": "terms",
+            "$as": "term",
+            "runs": [
+              {
+                "text": "{{ term }}",
+                "size": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "keepNext": true,
+        "spaceBefore": 20,
+        "spaceAfter": 6,
+        "runs": [
+          {
+            "text": "Acceptance",
+            "size": 16,
+            "color": "#1B2F4B"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "keepNext": true,
+        "spaceAfter": 14,
+        "lineHeight": 1.4,
+        "runs": [
+          {
+            "text": "To accept this quote, sign below or sign online. The total of ",
+            "size": 10
+          },
+          {
+            "text": "{{ total | money:USD }}",
+            "bold": true,
+            "size": 10
+          },
+          {
+            "text": " is valid until {{ quote.validUntil | date:\"d MMMM yyyy\" }}.",
+            "size": 10
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "widths": [
+          46,
+          8,
+          46
+        ],
+        "borders": {
+          "top": {
+            "style": "none"
+          },
+          "right": {
+            "style": "none"
+          },
+          "bottom": {
+            "style": "none"
+          },
+          "left": {
+            "style": "none"
+          },
+          "insideH": {
+            "style": "none"
+          },
+          "insideV": {
+            "style": "none"
+          }
+        },
+        "cellPadding": {
+          "top": 0,
+          "bottom": 0,
+          "left": 0,
+          "right": 0
+        },
+        "rows": [
+          {
+            "cells": [
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "ACCEPTED FOR {{ client.company | upper }}",
+                        "bold": true,
+                        "size": 8,
+                        "color": "#C25E2E",
+                        "letterSpacing": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 4
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "FOR {{ seller.name | upper }}",
+                        "bold": true,
+                        "size": 8,
+                        "color": "#C25E2E",
+                        "letterSpacing": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "padding": {
+                  "top": 40,
+                  "bottom": 4,
+                  "left": 0,
+                  "right": 0
+                },
+                "borders": {
+                  "bottom": {
+                    "style": "single",
+                    "width": 0.75,
+                    "color": "#1B2F4B"
+                  }
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 10
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 4
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 40,
+                  "bottom": 4,
+                  "left": 0,
+                  "right": 0
+                },
+                "borders": {
+                  "bottom": {
+                    "style": "single",
+                    "width": 0.75,
+                    "color": "#1B2F4B"
+                  }
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 10
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "padding": {
+                  "top": 3,
+                  "bottom": 14,
+                  "left": 0,
+                  "right": 0
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "Signature",
+                        "size": 8,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 4
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 3,
+                  "bottom": 14,
+                  "left": 0,
+                  "right": 0
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "Signature",
+                        "size": 8,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "padding": {
+                  "top": 0,
+                  "bottom": 4,
+                  "left": 0,
+                  "right": 0
+                },
+                "borders": {
+                  "bottom": {
+                    "style": "single",
+                    "width": 0.5,
+                    "color": "#C3CBD6"
+                  }
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ client.contact }}",
+                        "size": 10
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 4
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 0,
+                  "bottom": 4,
+                  "left": 0,
+                  "right": 0
+                },
+                "borders": {
+                  "bottom": {
+                    "style": "single",
+                    "width": 0.5,
+                    "color": "#C3CBD6"
+                  }
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ seller.signer }}, {{ seller.signerTitle }}",
+                        "size": 10
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "padding": {
+                  "top": 3,
+                  "bottom": 14,
+                  "left": 0,
+                  "right": 0
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "Name and title",
+                        "size": 8,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 4
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 3,
+                  "bottom": 14,
+                  "left": 0,
+                  "right": 0
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "Name and title",
+                        "size": 8,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "padding": {
+                  "top": 0,
+                  "bottom": 4,
+                  "left": 0,
+                  "right": 0
+                },
+                "borders": {
+                  "bottom": {
+                    "style": "single",
+                    "width": 0.5,
+                    "color": "#C3CBD6"
+                  }
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 10
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 4
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 0,
+                  "bottom": 4,
+                  "left": 0,
+                  "right": 0
+                },
+                "borders": {
+                  "bottom": {
+                    "style": "single",
+                    "width": 0.5,
+                    "color": "#C3CBD6"
+                  }
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "{{ quote.issuedAt | date:\"d MMMM yyyy\" }}",
+                        "size": 10
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "cells": [
+              {
+                "padding": {
+                  "top": 3,
+                  "bottom": 0,
+                  "left": 0,
+                  "right": 0
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "Date",
+                        "size": 8,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": " ",
+                        "size": 4
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "padding": {
+                  "top": 3,
+                  "bottom": 0,
+                  "left": 0,
+                  "right": 0
+                },
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "Date",
+                        "size": 8,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "widths": [
+          18,
+          82
+        ],
+        "borders": {
+          "top": {
+            "style": "single",
+            "width": 0.5,
+            "color": "#D5DBE3"
+          },
+          "right": {
+            "style": "none"
+          },
+          "bottom": {
+            "style": "none"
+          },
+          "left": {
+            "style": "none"
+          },
+          "insideH": {
+            "style": "none"
+          },
+          "insideV": {
+            "style": "none"
+          }
+        },
+        "cellPadding": {
+          "top": 14,
+          "bottom": 0,
+          "left": 0,
+          "right": 10
+        },
+        "rows": [
+          {
+            "cells": [
+              {
+                "blocks": [
+                  {
+                    "type": "image",
+                    "src": "{{ qr }}",
+                    "widthPx": 96,
+                    "heightPx": 96,
+                    "alt": "QR code for quote {{ quote.number }}"
+                  }
+                ]
+              },
+              {
+                "valign": "center",
+                "blocks": [
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 2,
+                    "runs": [
+                      {
+                        "text": "Review and sign online",
+                        "bold": true,
+                        "size": 10,
+                        "color": "#1B2F4B"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "spaceAfter": 0,
+                    "runs": [
+                      {
+                        "text": "Scan the code, or visit {{ quote.url }}. The signed copy carries a completion certificate that anyone can verify.",
+                        "size": 9,
+                        "color": "#5B6675"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

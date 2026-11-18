@@ -48,6 +48,9 @@
 @import "@particle-academy/fancy-fun-lab-ui/styles.css";
 /* /features/security renders PasskeyManager; site CSS, so the page never paints unstyled. */
 @import "@particle-academy/fancy-passkeys-ui/styles.css";
+/* /features/documents renders DocViewer and the signing ceremony. */
+@import "@particle-academy/last-word-ui/styles.css";
+@import "@particle-academy/fancy-sign-ui/styles.css";
 
 /* Each Feature micro-site's own identity (/features/{slug}). Loaded here, with
    the page stylesheet, never by `import "./x.css"` from the page component:

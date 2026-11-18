@@ -1,5 +1,5 @@
 {
-    "count": 406,
+    "count": 408,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -5981,6 +5981,28 @@
             "title": "@particle-academy/fancy-heuristics-js",
             "description": "Browser collector for Fancy Heuristics \u2014 clicks, scroll, time-on-page, and mouse-movement focus heatmaps for humans and agents; sendBeacon batching. Headless.",
             "package": "fancy-heuristics-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-http-errors",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-http-errors",
+            "description": "Turn any error response into one sentence for the UI: the Fancy error envelope, FastAPI details and 422 lists, Laravel validation, or an HTML proxy page, never echoing 5xx text. Field errors, retry-after and the request id come out in one shape. Zero runtime dependencies, no React.",
+            "package": "fancy-http-errors",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-http-guard-py",
+            "type": "registry:ui",
+            "title": "fancy-http-guard",
+            "description": "Request guards for Starlette and FastAPI, checked before the body is parsed: body size, list length and nesting depth, finite numbers only, every limit configurable per route. Errors render as the one Fancy error envelope with the request id. Pure ASGI, zero runtime dependencies. Pairs with @particle-academy/fancy-http-errors.",
+            "package": "fancy-http-guard-py",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

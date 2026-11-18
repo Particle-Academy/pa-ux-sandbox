@@ -305,18 +305,9 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['packagist' => 'particle-academy/fancy-http-guard'],
             'why' => 'Laravel leg of CC-fancy-0031: request guards checked BEFORE the body is parsed (body size 413, list length and nesting depth, finite numbers only with a 422 naming the field, and the workbook rows x columns cap paired with holy-sheet reader limits), every limit per route and configurable, plus one error envelope with the request id on every response, and an HTTP-client normaliser. Contract and fixtures in fancy-conformance http/*. Design: .ai/plans/request-guards-and-error-envelope.md (owner approved 2026-11-12). Packagist name 404 on 2026-11-12.',
         ],
-        'fancy-http-guard-py' => [
-            'name' => 'fancy-http-guard',
-            'repo' => 'Particle-Academy/fancy-http-guard-py',
-            'registries' => ['pypi' => 'fancy-http-guard'],
-            'why' => 'Python leg of CC-fancy-0031: pure ASGI middleware for Starlette and FastAPI that guards the raw body before FastAPI reads it, renders the one error envelope, and carries the request id. Zero runtime dependencies. PyPI name 404 on 2026-11-12; a 404 says the exact name is free, not that PyPI will accept it.',
-        ],
-        'fancy-http-errors' => [
-            'name' => '@particle-academy/fancy-http-errors',
-            'repo' => 'Particle-Academy/fancy-http-errors',
-            'registries' => ['npm' => '@particle-academy/fancy-http-errors'],
-            'why' => 'TS leg of CC-fancy-0031: turns ANY error response (the envelope, FastAPI detail and 422 lists, Laravel validation, an HTML proxy page) into one sentence for the UI, never echoing 5xx text. Zero runtime dependencies, no React. npm name 404 on 2026-11-12.',
-        ],
+        // CC-fancy-0031: fancy-http-guard-py (PyPI) and fancy-http-errors (npm)
+        // published 0.1.0 on 2026-11-18 and moved to META. The Laravel leg
+        // above is tagged v0.1.0 and waits here for its first Packagist submit.
         // CC-fancy-0036 -- e-signature. Owner approved 2026-11-13, eIDAS
         // ADVANCED included. Design: .ai/plans/fancy-sign.md. Phase 1 (SES)
         // shipped 2026-11-18: fancy-sign and fancy-sign-ui moved to META. What
@@ -492,6 +483,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-captcha' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#ea580c'],
         'fancy-service-token' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#475569'],
         'fancy-service-token-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#475569'],
+        'fancy-http-errors' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#b91c1c'],
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'charlotte' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -599,6 +591,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-inertia-server' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-service-token-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#475569'],
+        'fancy-http-guard-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#b91c1c'],
         'fancy-features-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'fancy-fun-lab-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f43f5e'],
         'fancy-catalog-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -904,6 +897,22 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'tagline' => 'Verify Fancy service tokens in a Node sidecar: the same fst1 verifier as the Python leg, with a connect-style middleware that refuses before the body is read. node:crypto only, zero runtime dependencies. Pairs with particle-academy/fancy-service-token.',
                 'npm' => '@particle-academy/fancy-service-token',
                 'repo' => 'Particle-Academy/fancy-service-token-js',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-http-guard-py',
+                'name' => 'fancy-http-guard',
+                'tagline' => 'Request guards for Starlette and FastAPI, checked before the body is parsed: body size, list length and nesting depth, finite numbers only, every limit configurable per route. Errors render as the one Fancy error envelope with the request id. Pure ASGI, zero runtime dependencies. Pairs with @particle-academy/fancy-http-errors.',
+                'pypi' => 'fancy-http-guard',
+                'repo' => 'Particle-Academy/fancy-http-guard-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'fancy-http-errors',
+                'name' => '@particle-academy/fancy-http-errors',
+                'tagline' => 'Turn any error response into one sentence for the UI: the Fancy error envelope, FastAPI details and 422 lists, Laravel validation, or an HTML proxy page, never echoing 5xx text. Field errors, retry-after and the request id come out in one shape. Zero runtime dependencies, no React.',
+                'npm' => '@particle-academy/fancy-http-errors',
+                'repo' => 'Particle-Academy/fancy-http-errors',
                 'language' => 'TypeScript',
             ],
             [

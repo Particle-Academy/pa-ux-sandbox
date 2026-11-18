@@ -356,6 +356,12 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-sign-pades'],
             'why' => 'Node twin of fancy-sign-pades (CC-fancy-0036 phases 2 and 3). Its CMS/TSP library (pkijs proposed) is an APPROVAL REQUEST in the plan, not a decision. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13.',
         ],
+        'fancy-template-ui' => [
+            'name' => '@particle-academy/fancy-template-ui',
+            'repo' => 'Particle-Academy/fancy-template-ui',
+            'registries' => ['npm' => '@particle-academy/fancy-template-ui'],
+            'why' => 'A visual BUILDER for paged document templates: a block list (add, drag, remove), the selected block\'s settings, and a paged preview that is page-for-page what fine-print writes. It edits ONE fancy-template document, controlled (value/onChange, JSON); rendering stays Template::render plus fine-print Agent::toBytes(). Fields come from a host list as chips (nobody types braces), hosts register their own block kinds (some required exactly once), repeating sections map to $each, and an agent-integrations bridge stages agent edits for a person to accept. Signature, initials and date fields for fancy-sign are host blocks. Owner approved 2026-11-18 (q_52d2323e). Built on fancy-doc-commons, fancy-template, react-fancy and last-word-ui, not on fancy-cms-ui (a web-page model). Needs two additive fancy-template SPEC changes first (an editor key in the envelope, a spreading splice). Plan: .ai/plans/document-builder.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-18 (control @particle-academy/fancy-template resolved).',
+        ],
     ];
 
     /**

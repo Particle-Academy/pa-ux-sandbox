@@ -1,5 +1,5 @@
 {
-    "count": 400,
+    "count": 402,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -6118,6 +6118,28 @@
             "title": "fancy-sheets",
             "description": "Full spreadsheet with formulas, multi-sheet workbooks, clipboard, CSV import/export.",
             "package": "fancy-sheets",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-sign",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-sign",
+            "description": "E-signature for Laravel and PHP, designed to support simple electronic signatures (SES): envelopes and signers with no accounts, an email one-time code to view and a fresh one to accept, consent and intent captured as hashes, signature, initials and date fields with a generated final signature page and optional per-page initials an organisation admin turns on, a per-envelope hash-chained audit trail of every view and sign event, a final PDF that keeps the as-sent bytes as a prefix, an Ed25519-sealed completion record and a certificate of completion, and a verifier that names each failure. Standard library only; PDF by fine-print. Have it reviewed by a lawyer before relying on it.",
+            "package": "fancy-sign",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-sign-ui",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-sign-ui",
+            "description": "React surfaces for fancy-sign, built from react-fancy, for simple electronic signatures: the signer ceremony (email code, consent, document with per-page view reports, signature pad, a fresh code to sign, or decline), the organisation admin's per-page switch, envelope setup with staged send and void, the timeline with browser-reported events labelled, the certificate of completion and a verifier. Controlled, with stable data-fancy-sign-* handles; an agent can manage an envelope and can never sign one. A React-free client on ./client.",
+            "package": "fancy-sign-ui",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

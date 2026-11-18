@@ -427,6 +427,25 @@ final class PackageFamily
             ]],
         ],
         [
+            'slug' => 'fancy-sign',
+            'name' => 'Fancy Sign',
+            'tagline' => 'E-signature designed to support simple electronic signatures: email codes to view and to sign, a hash-chained audit trail, a sealed final PDF and a certificate of completion, with the signer\'s ceremony in React.',
+            'group' => 'documents',
+            'kind' => 'headless',
+            'sections' => [
+                [
+                    'label' => 'Envelopes, codes, audit trail and seal',
+                    'capability' => 'e-signature envelopes with email one-time codes, a hash-chained audit trail and a sealed completion record',
+                    'members' => [['language' => 'PHP', 'slug' => 'fancy-sign']],
+                ],
+                [
+                    'label' => 'React UI',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'fancy-sign-ui']],
+                ],
+            ],
+        ],
+        [
             'slug' => 'fancy-qr',
             'name' => 'Fancy QR',
             'tagline' => 'QR codes on the server as SVG and PNG, zero dependencies, drawing the same symbol as react-fancy\'s QrCode for the same input.',

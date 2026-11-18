@@ -334,27 +334,15 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'why' => 'TS leg of CC-fancy-0031: turns ANY error response (the envelope, FastAPI detail and 422 lists, Laravel validation, an HTML proxy page) into one sentence for the UI, never echoing 5xx text. Zero runtime dependencies, no React. npm name 404 on 2026-11-12.',
         ],
         // CC-fancy-0036 -- e-signature. Owner approved 2026-11-13, eIDAS
-        // ADVANCED included. Design: .ai/plans/fancy-sign.md. Slugs are the
-        // ones the built packages will carry (the fancy-passkeys pattern:
-        // slug `fancy-sign`, repo `fancy-sign-php`), so moving an entry to
-        // META later cannot leave a stale planned twin behind.
-        'fancy-sign' => [
-            'name' => 'particle-academy/fancy-sign',
-            'repo' => 'Particle-Academy/fancy-sign-php',
-            'registries' => ['packagist' => 'particle-academy/fancy-sign'],
-            'why' => 'E-signature core, PHP leg of CC-fancy-0036 (owner approved 2026-11-13): envelopes, signature/initials/date fields, an auto-appended final signature page, admin per-page initials or signatures that never land on the final page, email one-time codes to view and to accept (no customer accounts), consent and intent capture, a per-envelope hash-chained audit trail (change-council scheme), engagement events (sent, opened, page viewed, signed, declined), an Ed25519-sealed completion record and certificate of completion, and a Laravel bridge. SES phase uses NO third-party code: standard-library hashing and sodium, fine-print for the PDF. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. Packagist name 404 on 2026-11-13 (control particle-academy/fancy-captcha resolved).',
-        ],
+        // ADVANCED included. Design: .ai/plans/fancy-sign.md. Phase 1 (SES)
+        // shipped 2026-11-18: fancy-sign and fancy-sign-ui moved to META. What
+        // is left here is not built: the Node twin (blocked on the
+        // fine-print-js writer) and the PAdES phases.
         'fancy-sign-js' => [
             'name' => '@particle-academy/fancy-sign',
             'repo' => 'Particle-Academy/fancy-sign-js',
             'registries' => ['npm' => '@particle-academy/fancy-sign'],
             'why' => 'Node twin of fancy-sign (CC-fancy-0036): the same core and wire contract, held to the PHP leg by fancy-conformance sign/* tables, node:crypto only. BLOCKED on the fine-print-js writer (planned above), which it needs to render the PDF. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13 (control @particle-academy/fancy-passkeys resolved).',
-        ],
-        'fancy-sign-ui' => [
-            'name' => '@particle-academy/fancy-sign-ui',
-            'repo' => 'Particle-Academy/fancy-sign-ui',
-            'registries' => ['npm' => '@particle-academy/fancy-sign-ui'],
-            'why' => 'React surfaces for fancy-sign (CC-fancy-0036), built from react-fancy: field palette and envelope setup, the signer ceremony (code gate, consent, viewer with per-page view events, signature pad, sign or decline), envelope timeline, certificate of completion, and a verifier. The agent bridge (registerSignBridge, sign_*) goes in agent-integrations and is management-only: no tool signs, accepts consent or verifies a code. fancy-cms gets fancy-sign:* field islands so an agent can place fields. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13.',
         ],
         'fancy-sign-pades' => [
             'name' => 'particle-academy/fancy-sign-pades',
@@ -509,6 +497,10 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'dark-slide' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'last-word' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#2563eb'],
         'fine-print' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#e11d48'],
+        // E-signature (CC-fancy-0036 phase 1, simple electronic signatures),
+        // rendered by fine-print. Owner, 2026-11-13: signing is a Documents feature.
+        'fancy-sign' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#7c3aed'],
+        'fancy-sign-ui' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#7c3aed'],
         'fancy-qr' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0f172a'],
         'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'fancy-compliance' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0d9488'],
@@ -797,6 +789,28 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'repo' => 'Particle-Academy/fine-print',
                 'packagist' => 'particle-academy/fine-print',
                 'language' => 'PHP',
+            ],
+            // E-signature (CC-fancy-0036 phase 1), released 2026-11-18.
+            // Wording held to the plan's section 10: designed to support simple
+            // electronic signatures, never a legal guarantee.
+            [
+                'slug' => 'fancy-sign',
+                'name' => 'particle-academy/fancy-sign',
+                'tagline' => 'E-signature for Laravel and PHP, designed to support simple electronic signatures (SES): envelopes and signers with no accounts, an email one-time code to view and a fresh one to accept, consent and intent captured as hashes, signature, initials and date fields with a generated final signature page and optional per-page initials an organisation admin turns on, a per-envelope hash-chained audit trail of every view and sign event, a final PDF that keeps the as-sent bytes as a prefix, an Ed25519-sealed completion record and a certificate of completion, and a verifier that names each failure. Standard library only; PDF by fine-print. Have it reviewed by a lawyer before relying on it.',
+                'composer' => 'particle-academy/fancy-sign',
+                'repo' => 'Particle-Academy/fancy-sign-php',
+                'packagist' => 'particle-academy/fancy-sign',
+                'language' => 'PHP',
+                'pairs' => ['fancy-sign-ui', 'fine-print'],
+            ],
+            [
+                'slug' => 'fancy-sign-ui',
+                'name' => '@particle-academy/fancy-sign-ui',
+                'tagline' => 'React surfaces for fancy-sign, built from react-fancy, for simple electronic signatures: the signer ceremony (email code, consent, document with per-page view reports, signature pad, a fresh code to sign, or decline), the organisation admin\'s per-page switch, envelope setup with staged send and void, the timeline with browser-reported events labelled, the certificate of completion and a verifier. Controlled, with stable data-fancy-sign-* handles; an agent can manage an envelope and can never sign one. A React-free client on ./client.',
+                'npm' => '@particle-academy/fancy-sign-ui',
+                'repo' => 'Particle-Academy/fancy-sign-ui',
+                'language' => 'TypeScript',
+                'pairs' => ['fancy-sign'],
             ],
             [
                 'slug' => 'fancy-qr',

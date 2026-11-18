@@ -131,11 +131,12 @@ final class FeatureSites
         'documents' => [
             'course' => 'fancy-documents',
             'name' => 'Documents',
-            'tagline' => 'xlsx, pptx and docx writers and readers for PHP, Node and Python, plus PDF for PHP.',
+            'tagline' => 'xlsx, pptx and docx writers and readers for PHP, Node and Python, plus PDF and e-signature for PHP.',
             'icon' => 'file-text',
             'component' => 'Features/Documents/Index',
             'theme' => ['accent' => '#2563eb', 'accentDark' => '#60a5fa', 'surface' => '#eff6ff', 'surfaceDark' => '#0a1124', 'font' => 'serif'],
-            'members' => ['family:holy-sheet', 'family:dark-slide', 'family:last-word', 'family:fine-print'],
+            // fancy-sign joined 2026-11-18 (owner, 2026-11-13: signing is a Documents feature).
+            'members' => ['family:holy-sheet', 'family:dark-slide', 'family:last-word', 'family:fine-print', 'family:fancy-sign'],
             'bridges' => [],
         ],
         // Every media component the kit ships (owner, 2026-11-14): react-fancy's

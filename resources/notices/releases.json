@@ -30,7 +30,7 @@
         "fancy-code": "0.17.2",
         "fancy-compliance": "0.1.2",
         "fancy-compliance-ui": "0.4.0",
-        "fancy-conformance": "0.52.0",
+        "fancy-conformance": "0.54.0",
         "fancy-connector-core": "0.15.2",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.6.0",
@@ -80,8 +80,8 @@
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
         "fancy-sheets": "0.14.0",
-        "fancy-sign": "0.2.0",
-        "fancy-sign-ui": "0.1.0",
+        "fancy-sign": "0.3.0",
+        "fancy-sign-ui": "0.2.0",
         "fancy-slides": "0.25.2",
         "fancy-template": "0.4.0",
         "fancy-term": "0.8.1",
@@ -149,6 +149,38 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "fancy-sign-ui",
+            "registry": "npm",
+            "version": "0.2.0",
+            "published_at": "2026-11-18T02:32:47Z",
+            "first": false,
+            "summary": "Request changes"
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.54.0",
+            "published_at": "2026-11-18T02:27:08Z",
+            "first": false,
+            "summary": "$spread for fancy-template: a group of siblings per item, spliced flat"
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.53.0",
+            "published_at": "2026-11-18T02:15:48Z",
+            "first": false,
+            "summary": "Requests for changes (fancy-sign 0.3.0, owner-approved q_8c180eab)"
+        },
+        {
+            "slug": "fancy-sign",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-11-18T02:13:46Z",
+            "first": false,
+            "summary": "Request changes"
+        },
         {
             "slug": "fancy-sign",
             "registry": "composer",

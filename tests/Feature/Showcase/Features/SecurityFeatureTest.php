@@ -47,6 +47,8 @@ it('serves the Security page with passkeys, captcha and security.txt, from the r
             'fancy-passkeys', 'fancy-passkeys-js', 'fancy-passkeys-ui',
             'fancy-captcha', 'fancy-captcha-ui',
             'fancy-x-files', 'fancy-x-files-js', 'fancy-x-files-ui',
+            // whenPublished: the service-token trio shipped 0.1.0 on 2026-11-18.
+            'fancy-service-token', 'fancy-service-token-js', 'fancy-service-token-py',
         ])
         ->and(collect($page['props']['feature']['bridges'])->pluck('name')->all())->toBe(['registerPasskeyBridge']);
 });

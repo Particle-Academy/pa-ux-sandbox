@@ -1,5 +1,5 @@
 {
-    "count": 402,
+    "count": 405,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -6107,6 +6107,39 @@
             "title": "particle-academy/fancy-seo",
             "description": "Server-rendered SEO + crawlability for Laravel + Inertia \u2014 per-route meta / Open Graph / Twitter / JSON-LD on the first byte, dynamic sitemap.xml / robots.txt / llms.txt, and per-page Markdown. The PHP baseline that pairs with @particle-academy/fancy-inertia's <Seo>.",
             "package": "fancy-seo",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-service-token",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-service-token",
+            "description": "Service tokens from a Laravel app to its Python or Node sidecar: a short-lived HMAC-SHA256 token (audience, issuer, expiry, the caller's request id, a nonce) on every outgoing request via Http::withServiceToken(), plus a verifier held to the same shared fixtures. Standard library only, no JWT library. Pairs with fancy-service-token (PyPI) and @particle-academy/fancy-service-token.",
+            "package": "fancy-service-token",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-service-token-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-service-token",
+            "description": "Verify Fancy service tokens in a Node sidecar: the same fst1 verifier as the Python leg, with a connect-style middleware that refuses before the body is read. node:crypto only, zero runtime dependencies. Pairs with particle-academy/fancy-service-token.",
+            "package": "fancy-service-token-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-service-token-py",
+            "type": "registry:ui",
+            "title": "fancy-service-token",
+            "description": "Verify Fancy service tokens in a Python sidecar: a framework-free verifier plus ASGI middleware for Starlette and FastAPI that refuses a request before its body is read and hands the verified request id to handlers and logs. Standard library only. Pairs with particle-academy/fancy-service-token.",
+            "package": "fancy-service-token-py",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

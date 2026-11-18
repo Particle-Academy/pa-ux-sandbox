@@ -297,24 +297,8 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-raster'],
             'why' => 'Our own tiled raster graphics engine, zero runtime dependencies: XYZ tiles, pan/zoom/inertia/pinch/keyboard, retina, markers and popups, a prioritised tile cache, and a 2D to 3D path (Canvas2D, own WebGL for tilt/globe, and a fancy-3d CanvasEngine + TileSource). Becomes fancy-map\'s default provider and replaces Leaflet, which fails the freshness rule (owner, 2026-11-12). Certified by the flabs "Maps & 3D" lab. Design: .ai/plans/fancy-raster-map-engine.md (owner approved 2026-11-12). Phase 0 in progress; nothing published. npm name `@particle-academy/fancy-raster` 404 on 2026-11-11 (control @particle-academy/fancy-3d resolved); re-check at bootstrap.',
         ],
-        'fancy-service-token' => [
-            'name' => 'particle-academy/fancy-service-token',
-            'repo' => 'Particle-Academy/fancy-service-token',
-            'registries' => ['packagist' => 'particle-academy/fancy-service-token'],
-            'why' => 'Service tokens between a Fancy app and its sidecar service, PHP leg: a Laravel signer that puts a short-lived HMAC-SHA256 token (audience, issuer, expiry, the caller`s request id, a nonce) on every outgoing request to a Python or Node sidecar, plus a framework-free verifier held to the same fixtures. Standard library only (hash_hmac / hash_equals), no JWT library. Approved as CC-fancy-0030 (2026-11-12). Built, nothing published. Packagist name 404 on 2026-11-12 (control particle-academy/fancy-captcha resolved).',
-        ],
-        'fancy-service-token-py' => [
-            'name' => 'fancy-service-token',
-            'repo' => 'Particle-Academy/fancy-service-token-py',
-            'registries' => ['pypi' => 'fancy-service-token'],
-            'why' => 'Python leg of CC-fancy-0030: a framework-free verifier plus ASGI middleware for Starlette and FastAPI that refuses a request BEFORE its body is read, with a named reason from a fixed enum, and exposes the verified request id to handlers and logs. Standard library only (hmac / compare_digest). PyPI `fancy-service-token`, `fancyservicetoken` and `fancy_service_token` all 404 on 2026-11-12 (control fancy-holy-sheet resolved); the form is the final authority.',
-        ],
-        'fancy-service-token-js' => [
-            'name' => '@particle-academy/fancy-service-token',
-            'repo' => 'Particle-Academy/fancy-service-token-js',
-            'registries' => ['npm' => '@particle-academy/fancy-service-token'],
-            'why' => 'Node leg of CC-fancy-0030: the verifier mirror, with a connect-style middleware that refuses before the body is read. node:crypto only (createHmac / timingSafeEqual). npm name 404 on 2026-11-12 (control @particle-academy/react-fancy resolved).',
-        ],
+        // CC-fancy-0030: all three fancy-service-token legs published 0.1.0 on
+        // 2026-11-18 and moved to META.
         'fancy-http-guard' => [
             'name' => 'particle-academy/fancy-http-guard',
             'repo' => 'Particle-Academy/fancy-http-guard',
@@ -511,6 +495,8 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'fancy-compliance' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0d9488'],
         'fancy-captcha' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#ea580c'],
+        'fancy-service-token' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#475569'],
+        'fancy-service-token-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#475569'],
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'charlotte' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -617,6 +603,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         // Python backends -- each the third runtime of an existing pair.
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-inertia-server' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-service-token-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#475569'],
         'fancy-features-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'fancy-fun-lab-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f43f5e'],
         'fancy-catalog-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -897,6 +884,31 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'repo' => 'Particle-Academy/fancy-captcha',
                 'packagist' => 'particle-academy/fancy-captcha',
                 'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-service-token',
+                'name' => 'particle-academy/fancy-service-token',
+                'tagline' => 'Service tokens from a Laravel app to its Python or Node sidecar: a short-lived HMAC-SHA256 token (audience, issuer, expiry, the caller\'s request id, a nonce) on every outgoing request via Http::withServiceToken(), plus a verifier held to the same shared fixtures. Standard library only, no JWT library. Pairs with fancy-service-token (PyPI) and @particle-academy/fancy-service-token.',
+                'composer' => 'particle-academy/fancy-service-token',
+                'repo' => 'Particle-Academy/fancy-service-token',
+                'packagist' => 'particle-academy/fancy-service-token',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-service-token-py',
+                'name' => 'fancy-service-token',
+                'tagline' => 'Verify Fancy service tokens in a Python sidecar: a framework-free verifier plus ASGI middleware for Starlette and FastAPI that refuses a request before its body is read and hands the verified request id to handlers and logs. Standard library only. Pairs with particle-academy/fancy-service-token.',
+                'pypi' => 'fancy-service-token',
+                'repo' => 'Particle-Academy/fancy-service-token-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'fancy-service-token-js',
+                'name' => '@particle-academy/fancy-service-token',
+                'tagline' => 'Verify Fancy service tokens in a Node sidecar: the same fst1 verifier as the Python leg, with a connect-style middleware that refuses before the body is read. node:crypto only, zero runtime dependencies. Pairs with particle-academy/fancy-service-token.',
+                'npm' => '@particle-academy/fancy-service-token',
+                'repo' => 'Particle-Academy/fancy-service-token-js',
+                'language' => 'TypeScript',
             ],
             [
                 'slug' => 'fancy-captcha-ui',

@@ -2,7 +2,7 @@
     "window_days": 60,
     "latest": {
         "agent-integrations": "0.67.0",
-        "change-council": "0.7.2",
+        "change-council": "0.9.1",
         "charlotte": "0.4.0",
         "classroom": "0.7.0",
         "dark-slide": "0.22.3",
@@ -62,6 +62,8 @@
         "fancy-grid": "0.4.1",
         "fancy-heuristics": "0.7.0",
         "fancy-heuristics-js": "0.4.0",
+        "fancy-http-errors": "0.1.0",
+        "fancy-http-guard-py": "0.1.0",
         "fancy-inertia": "0.16.0",
         "fancy-live": "0.1.0",
         "fancy-map": "0.2.1",
@@ -80,11 +82,11 @@
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
         "fancy-service-token": "0.1.0",
-        "fancy-service-token-js": "0.1.0",
-        "fancy-service-token-py": "0.1.0",
+        "fancy-service-token-js": "0.2.0",
+        "fancy-service-token-py": "0.2.0",
         "fancy-sheets": "0.14.0",
         "fancy-sign": "0.3.0",
-        "fancy-sign-ui": "0.3.0",
+        "fancy-sign-ui": "0.4.0",
         "fancy-slides": "0.25.2",
         "fancy-template": "0.5.0",
         "fancy-template-ui": "0.1.0",
@@ -156,6 +158,46 @@
         {
             "slug": "fancy-sign-ui",
             "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-19T03:53:19Z",
+            "first": false,
+            "summary": "data-fancy-sign-error-panel on a panel error, naming its panel, and the matching optional errorPanel in…"
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.9.1",
+            "published_at": "2026-11-19T02:22:29Z",
+            "first": false,
+            "summary": "council:ingest --genie-json (and council:census-ingest) could never match a sender"
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.9.0",
+            "published_at": "2026-11-19T01:42:23Z",
+            "first": false,
+            "summary": "The owner can invite an agent onto the council"
+        },
+        {
+            "slug": "fancy-service-token-py",
+            "registry": "pypi",
+            "version": "0.2.0",
+            "published_at": "2026-11-18T21:40:27Z",
+            "first": false,
+            "summary": "BREAKING: the 401 refusal body is now the Fancy error envelope"
+        },
+        {
+            "slug": "fancy-service-token-js",
+            "registry": "npm",
+            "version": "0.2.0",
+            "published_at": "2026-11-18T21:38:36Z",
+            "first": false,
+            "summary": "BREAKING: the 401 refusal body is now the Fancy error envelope"
+        },
+        {
+            "slug": "fancy-sign-ui",
+            "registry": "npm",
             "version": "0.3.0",
             "published_at": "2026-11-18T20:57:39Z",
             "first": false,
@@ -168,6 +210,22 @@
             "published_at": "2026-11-18T20:39:43Z",
             "first": false,
             "summary": "registerTemplateBridge: (./bridges/template, prefix tpl_): the document builder (@particle-academy/fancy-template-ui)…"
+        },
+        {
+            "slug": "fancy-http-errors",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-18T20:36:07Z",
+            "first": true,
+            "summary": "normalise(), normaliseResponse() and normaliseFailure()"
+        },
+        {
+            "slug": "fancy-http-guard-py",
+            "registry": "pypi",
+            "version": "0.1.0",
+            "published_at": "2026-11-18T20:35:48Z",
+            "first": true,
+            "summary": "GuardMiddleware, pure ASGI middleware that checks a request before anything parses it"
         },
         {
             "slug": "fancy-service-token-js",

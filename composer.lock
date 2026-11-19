@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c87200d04a84814d8156621a450f6e19",
+    "content-hash": "a4356b9b7b1876ee791875c7c14b7b1e",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3541,7 +3541,8 @@
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
                 "source": "https://github.com/nikic/PHP-Parser/tree/v5.7.0"
             },
-            "time": "2025-12-06T11:56:16+00:00"
+            "time": "2025-12-06T11:56:16+00:00",
+            "published-time": "2025-12-06T11:56:57+00:00"
         },
         {
             "name": "nunomaduro/termwind",
@@ -10731,7 +10732,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-01T08:46:24+00:00"
+            "time": "2025-08-01T08:46:24+00:00",
+            "published-time": "2025-08-01T08:46:44+00:00"
         },
         {
             "name": "nunomaduro/collision",
@@ -11323,7 +11325,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-03T12:33:53+00:00"
+            "time": "2024-03-03T12:33:53+00:00",
+            "published-time": "2024-03-03T12:39:44+00:00"
         },
         {
             "name": "phar-io/version",
@@ -11374,7 +11377,8 @@
                 "issues": "https://github.com/phar-io/version/issues",
                 "source": "https://github.com/phar-io/version/tree/3.2.1"
             },
-            "time": "2022-02-21T01:04:05+00:00"
+            "time": "2022-02-21T01:04:05+00:00",
+            "published-time": "2022-02-21T01:04:30+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -11685,7 +11689,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-01T13:24:19+00:00"
+            "time": "2026-06-01T13:24:19+00:00",
+            "published-time": "2026-06-01T13:25:01+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -11758,7 +11763,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-02T14:04:18+00:00"
+            "time": "2026-02-02T14:04:18+00:00",
+            "published-time": "2026-02-02T14:04:37+00:00"
         },
         {
             "name": "phpunit/php-invoker",
@@ -11822,7 +11828,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T04:58:58+00:00"
+            "time": "2025-02-07T04:58:58+00:00",
+            "published-time": "2025-02-07T04:59:09+00:00"
         },
         {
             "name": "phpunit/php-text-template",
@@ -11882,7 +11889,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T04:59:16+00:00"
+            "time": "2025-02-07T04:59:16+00:00",
+            "published-time": "2025-02-07T04:59:27+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -11942,7 +11950,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T04:59:38+00:00"
+            "time": "2025-02-07T04:59:38+00:00",
+            "published-time": "2025-02-07T04:59:52+00:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -12032,7 +12041,8 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-06-04T06:14:42+00:00"
+            "time": "2026-06-04T06:14:42+00:00",
+            "published-time": "2026-06-04T06:16:52+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -12101,7 +12111,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-17T05:29:34+00:00"
+            "time": "2026-05-17T05:29:34+00:00",
+            "published-time": "2026-05-17T05:30:34+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -12193,7 +12204,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-21T04:45:25+00:00"
+            "time": "2026-05-21T04:45:25+00:00",
+            "published-time": "2026-05-21T04:45:36+00:00"
         },
         {
             "name": "sebastian/complexity",
@@ -12251,7 +12263,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T04:55:25+00:00"
+            "time": "2025-02-07T04:55:25+00:00",
+            "published-time": "2025-02-07T04:55:36+00:00"
         },
         {
             "name": "sebastian/diff",
@@ -12318,7 +12331,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T04:55:46+00:00"
+            "time": "2025-02-07T04:55:46+00:00",
+            "published-time": "2025-02-07T04:56:02+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -12394,7 +12408,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-25T13:40:20+00:00"
+            "time": "2026-05-25T13:40:20+00:00",
+            "published-time": "2026-05-25T13:40:39+00:00"
         },
         {
             "name": "sebastian/exporter",
@@ -12484,7 +12499,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-20T04:37:17+00:00"
+            "time": "2026-05-20T04:37:17+00:00",
+            "published-time": "2026-05-20T04:37:31+00:00"
         },
         {
             "name": "sebastian/global-state",
@@ -12558,7 +12574,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-01T15:10:33+00:00"
+            "time": "2026-06-01T15:10:33+00:00",
+            "published-time": "2026-06-01T15:20:45+00:00"
         },
         {
             "name": "sebastian/lines-of-code",
@@ -12628,7 +12645,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-19T16:22:07+00:00"
+            "time": "2026-05-19T16:22:07+00:00",
+            "published-time": "2026-05-19T16:22:47+00:00"
         },
         {
             "name": "sebastian/object-enumerator",
@@ -12686,7 +12704,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T04:57:48+00:00"
+            "time": "2025-02-07T04:57:48+00:00",
+            "published-time": "2025-02-07T04:58:08+00:00"
         },
         {
             "name": "sebastian/object-reflector",
@@ -12742,7 +12761,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T04:58:17+00:00"
+            "time": "2025-02-07T04:58:17+00:00",
+            "published-time": "2025-02-07T04:58:28+00:00"
         },
         {
             "name": "sebastian/recursion-context",
@@ -12818,7 +12838,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-13T04:44:59+00:00"
+            "time": "2025-08-13T04:44:59+00:00",
+            "published-time": "2025-08-13T04:45:10+00:00"
         },
         {
             "name": "sebastian/type",
@@ -12887,7 +12908,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-20T06:45:45+00:00"
+            "time": "2026-05-20T06:45:45+00:00",
+            "published-time": "2026-05-20T06:50:13+00:00"
         },
         {
             "name": "sebastian/version",
@@ -12941,7 +12963,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-07T05:00:38+00:00"
+            "time": "2025-02-07T05:00:38+00:00",
+            "published-time": "2025-02-07T05:00:51+00:00"
         },
         {
             "name": "staabm/side-effects-detector",
@@ -12993,7 +13016,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-20T05:08:20+00:00"
+            "time": "2024-10-20T05:08:20+00:00",
+            "published-time": "2024-10-20T05:09:39+00:00"
         },
         {
             "name": "ta-tikoma/phpunit-architecture-test",
@@ -13102,7 +13126,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-08T11:19:18+00:00"
+            "time": "2025-12-08T11:19:18+00:00",
+            "published-time": "2025-12-08T11:19:39+00:00"
         },
         {
             "name": "webmozart/assert",

@@ -23,7 +23,7 @@
         "fancy-cf-relay": "0.2.0",
         "fancy-chat-js": "0.2.0",
         "fancy-chat-php": "0.2.0",
-        "fancy-chat-ui": "0.2.0",
+        "fancy-chat-ui": "0.3.0",
         "fancy-cli": "0.9.1",
         "fancy-cms": "0.9.1",
         "fancy-cms-ui": "0.14.1",
@@ -51,12 +51,12 @@
         "fancy-fun-lab-py": "0.1.1",
         "fancy-fun-lab-ui": "0.2.0",
         "fancy-git": "0.4.1",
-        "fancy-git-bitbucket-js": "0.2.0",
-        "fancy-git-bitbucket-php": "0.2.0",
-        "fancy-git-github-js": "0.3.0",
-        "fancy-git-github-php": "0.3.1",
-        "fancy-git-gitlab-js": "0.3.1",
-        "fancy-git-gitlab-php": "0.3.0",
+        "fancy-git-bitbucket-js": "0.3.0",
+        "fancy-git-bitbucket-php": "0.3.0",
+        "fancy-git-github-js": "0.4.0",
+        "fancy-git-github-php": "0.4.0",
+        "fancy-git-gitlab-js": "0.3.2",
+        "fancy-git-gitlab-php": "0.3.1",
         "fancy-git-js": "0.3.3",
         "fancy-git-ui": "0.5.0",
         "fancy-grid": "0.4.1",
@@ -85,7 +85,7 @@
         "fancy-service-token-js": "0.2.0",
         "fancy-service-token-py": "0.2.0",
         "fancy-sheets": "0.14.0",
-        "fancy-sign": "0.3.0",
+        "fancy-sign": "0.4.0",
         "fancy-sign-ui": "0.4.0",
         "fancy-slides": "0.25.2",
         "fancy-template": "0.5.0",
@@ -111,7 +111,7 @@
         "laravel-catalog": "0.13.0",
         "laravel-courses": "0.4.0",
         "laravel-fms": "0.12.0",
-        "laravel-fun-lab": "0.8.0",
+        "laravel-fun-lab": "0.8.1",
         "laravel-jobs": "0.5.0",
         "last-word": "0.21.0",
         "last-word-js": "0.17.0",
@@ -155,6 +155,78 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "fancy-git-bitbucket-js",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-11-19T08:19:30Z",
+            "first": false,
+            "summary": "CI: the lab-certificate gate verifies against the lab's rotated key list"
+        },
+        {
+            "slug": "fancy-git-gitlab-js",
+            "registry": "npm",
+            "version": "0.3.2",
+            "published_at": "2026-11-19T08:15:47Z",
+            "first": false,
+            "summary": "A GET that answers 5xx is retried, at most twice"
+        },
+        {
+            "slug": "fancy-git-github-js",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-19T08:13:08Z",
+            "first": false,
+            "summary": "BREAKING (only if you passed client): octokit is removed; the adapter talks to GitHub through its own small client on…"
+        },
+        {
+            "slug": "fancy-git-bitbucket-php",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-11-19T07:59:25Z",
+            "first": false,
+            "summary": "Rebranded the display name to Fancy Dev Kit (README and package description)"
+        },
+        {
+            "slug": "fancy-git-github-php",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-19T07:59:24Z",
+            "first": false,
+            "summary": "The tag workflow is now .github/workflows/publish.yml, named Publish"
+        },
+        {
+            "slug": "fancy-git-gitlab-php",
+            "registry": "composer",
+            "version": "0.3.1",
+            "published_at": "2026-11-19T07:59:24Z",
+            "first": false,
+            "summary": "A GET that answers 5xx is retried, at most twice"
+        },
+        {
+            "slug": "laravel-fun-lab",
+            "registry": "composer",
+            "version": "0.8.1",
+            "published_at": "2026-11-19T06:38:05Z",
+            "first": false,
+            "summary": "The broadcast payloads are pinned too"
+        },
+        {
+            "slug": "fancy-sign",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-19T06:38:02Z",
+            "first": false,
+            "summary": "Signing::preview(array $input, ?string $orgId = null): string"
+        },
+        {
+            "slug": "fancy-chat-ui",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-11-19T05:22:18Z",
+            "first": false,
+            "summary": "Tests and docs for AgentComposer attachments (CC-fancy-0043)"
+        },
         {
             "slug": "fancy-sign-ui",
             "registry": "npm",

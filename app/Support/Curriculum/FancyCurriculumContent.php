@@ -1242,9 +1242,9 @@ become a **`Review`**, with the states `open`, `merged`, `closed` and `draft`.
 Adapters ship per host, for Node and for PHP: `fancy-git-github`,
 `fancy-git-gitlab` and `fancy-git-bitbucket`. Register the ones you need on a
 `ProviderRegistry`; given a remote, `identify` asks each registered provider in
-turn which one owns it. The GitHub Node adapter uses GitHub's Octokit SDK, the
-GitLab Node adapter has no runtime dependency beyond fancy-git, and the Bitbucket
-adapters target Bitbucket Cloud only.
+turn which one owns it. The Node adapters have no runtime dependency beyond
+fancy-git (each talks to its host through a small client on `fetch`), and the
+Bitbucket adapters target Bitbucket Cloud only.
 
 **Issues are a separate, optional contract**, `IssueProvider`, and only the
 GitHub adapters implement it. Check `supportsIssues(provider)` before calling an

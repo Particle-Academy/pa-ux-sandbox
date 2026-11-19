@@ -201,4 +201,17 @@ class FancyCurriculumTest extends TestCase
             ->postJson('api/courses/curriculums', ['slug' => 'admin-made', 'title' => 'Admin made'])
             ->assertCreated();
     }
+
+    /**
+     * fancy-git-github 0.4.0 dropped octokit for its own client on `fetch`, so
+     * no Node adapter carries a provider SDK any more. The git course said the
+     * GitHub adapter used Octokit; a lesson must not teach a dependency the
+     * package no longer has.
+     */
+    public function test_the_git_course_does_not_claim_an_octokit_dependency(): void
+    {
+        $authored = (string) json_encode(Content::courses());
+
+        $this->assertStringNotContainsStringIgnoringCase('octokit', $authored);
+    }
 }

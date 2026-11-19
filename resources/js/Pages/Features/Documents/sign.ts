@@ -64,6 +64,15 @@ export type DemoSignClient = SignClient & {
 
 const ZERO = "0".repeat(64);
 
+/**
+ * The PDF-mode completion, or null. Since fancy-sign-ui 0.6 an envelope's
+ * `completion` may be a data-mode record, which has no `as_sent_sha256` /
+ * `final_sha256`; this demo only ever makes PDF-mode ones.
+ */
+export function pdfCompletion(completion: Envelope["completion"]): Completion | null {
+    return completion && "final_sha256" in completion ? completion : null;
+}
+
 export async function sha256Hex(data: ArrayBuffer | Uint8Array | string): Promise<string> {
     const bytes = typeof data === "string" ? new TextEncoder().encode(data) : data instanceof Uint8Array ? data : new Uint8Array(data);
     const digest = await crypto.subtle.digest("SHA-256", bytes.slice().buffer);
@@ -217,6 +226,7 @@ export function createDemoSignClient(options: DemoSignOptions): DemoSignClient {
     };
 
     const notHere = (what: string): never => refused("forbidden", `${what} is a sender action; this demo shows the signer's side.`, 403);
+    const notDataMode = (): never => refused("invalid_request", "This demo signs a PDF; data mode is not part of it.", 422);
 
     const client: DemoSignClient = {
         getSession: () => session,
@@ -232,13 +242,21 @@ export function createDemoSignClient(options: DemoSignOptions): DemoSignClient {
         voidEnvelope: async () => notHere("Voiding"),
         remindEnvelope: async () => notHere("Reminding"),
         listEvents: async () => [...events],
-        getCertificate: async (): Promise<CertificateJson> => ({ envelope, completion: envelope.completion, events: [...events] }),
+        getCertificate: async (): Promise<CertificateJson> => ({ envelope, completion: pdfCompletion(envelope.completion), events: [...events] }),
         getCertificatePdf: async () => notHere("The certificate PDF"),
         getDocument: async () => documentBlob ?? refused("not_found", "No document yet.", 404),
         certificateUrl: () => "#",
         documentUrl: () => "#",
         getOrgSettings: async () => refused("not_found", "No organisation in this demo.", 404),
         updateOrgSettings: async () => notHere("Organisation settings"),
+
+        // Data mode (fancy-sign-ui 0.6): this demo signs a PDF, so the data-mode
+        // calls refuse rather than pretend.
+        inviteSigner: async () => notHere("Inviting a signer"),
+        attachFinal: async () => notHere("Registering the final PDF"),
+        getSignatures: async () => notDataMode(),
+        signerData: async () => notDataMode(),
+        reportRendered: async () => notDataMode(),
 
         requestCode: async (token, purpose) => {
             requireToken(token);

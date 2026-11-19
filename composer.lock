@@ -4235,16 +4235,16 @@
         },
         {
             "name": "particle-academy/fancy-heuristics",
-            "version": "v0.7.0",
+            "version": "v0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-heuristics.git",
-                "reference": "2353144df65db435b8d695c79d77d1e9f08c8ce6"
+                "reference": "e50c93fe848b0191b0b752ee8803a682e76cd4d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/2353144df65db435b8d695c79d77d1e9f08c8ce6",
-                "reference": "2353144df65db435b8d695c79d77d1e9f08c8ce6",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/e50c93fe848b0191b0b752ee8803a682e76cd4d3",
+                "reference": "e50c93fe848b0191b0b752ee8803a682e76cd4d3",
                 "shasum": ""
             },
             "require": {
@@ -4256,12 +4256,12 @@
                 "illuminate/routing": "^13.0",
                 "illuminate/support": "^13.0",
                 "illuminate/validation": "^13.0",
+                "laravel/framework": "^13.0",
                 "php": "^8.4"
             },
             "require-dev": {
                 "laravel/pint": "^1.26",
-                "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "pestphp/pest": "^3.0|^4.0"
+                "pestphp/pest": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -4305,8 +4305,8 @@
                 "issues": "https://github.com/Particle-Academy/fancy-heuristics/issues",
                 "source": "https://github.com/Particle-Academy/fancy-heuristics"
             },
-            "time": "2026-11-18T06:02:53+00:00",
-            "published-time": "2026-11-18T06:40:15+00:00"
+            "time": "2026-11-19T18:30:11+00:00",
+            "published-time": "2026-11-19T18:55:15+00:00"
         },
         {
             "name": "particle-academy/fancy-mlm",
@@ -4573,25 +4573,29 @@
         },
         {
             "name": "particle-academy/fancy-x-files",
-            "version": "v0.2.0",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-x-files.git",
-                "reference": "93158eac6b11349cddd7f77580eddd70052ec7ae"
+                "reference": "67fff5aa29d2577b07daa3c53e0332e488cee016"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-x-files/zipball/93158eac6b11349cddd7f77580eddd70052ec7ae",
-                "reference": "93158eac6b11349cddd7f77580eddd70052ec7ae",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-x-files/zipball/67fff5aa29d2577b07daa3c53e0332e488cee016",
+                "reference": "67fff5aa29d2577b07daa3c53e0332e488cee016",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.4"
             },
+            "conflict": {
+                "illuminate/support": "<13.0",
+                "laravel/framework": "<13.0"
+            },
             "require-dev": {
+                "laravel/framework": "^13.0",
                 "laravel/pint": "^1.26",
-                "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "pestphp/pest": "^3.0|^4.0"
+                "pestphp/pest": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -4635,7 +4639,8 @@
                 "issues": "https://github.com/Particle-Academy/fancy-x-files/issues",
                 "source": "https://github.com/Particle-Academy/fancy-x-files"
             },
-            "time": "2026-08-07T15:22:43+00:00"
+            "time": "2026-11-19T18:30:12+00:00",
+            "published-time": "2026-11-19T19:49:15+00:00"
         },
         {
             "name": "particle-academy/fine-print",
@@ -4947,16 +4952,16 @@
         },
         {
             "name": "particle-academy/laravel-fun-lab",
-            "version": "v0.8.0",
+            "version": "v0.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-fun-lab.git",
-                "reference": "f49a33f7f88c4d9af03cf63372d77d0b590ec94f"
+                "reference": "a33690010ebc1568f550e972875d44fcd6789ca5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-fun-lab/zipball/f49a33f7f88c4d9af03cf63372d77d0b590ec94f",
-                "reference": "f49a33f7f88c4d9af03cf63372d77d0b590ec94f",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-fun-lab/zipball/a33690010ebc1568f550e972875d44fcd6789ca5",
+                "reference": "a33690010ebc1568f550e972875d44fcd6789ca5",
                 "shasum": ""
             },
             "require": {
@@ -4967,17 +4972,17 @@
                 "illuminate/routing": "^13.0",
                 "illuminate/support": "^13.0",
                 "illuminate/validation": "^13.0",
+                "laravel/framework": "^13.0",
                 "php": "^8.4",
-                "symfony/yaml": "^6.0|^7.0|^8.0"
+                "symfony/yaml": "^6.4.50|^7.4.23|^8.1.11"
             },
             "replace": {
                 "particleacademy/laravel-fun-lab": "self.version"
             },
             "require-dev": {
                 "laravel/pint": "^1.26",
-                "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "particle-academy/fancy-conformance": "0.49.0",
-                "pestphp/pest": "^3.0|^4.0"
+                "particle-academy/fancy-conformance": "0.50.0",
+                "pestphp/pest": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -5018,10 +5023,10 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-fun-lab/issues",
-                "source": "https://github.com/Particle-Academy/laravel-fun-lab/tree/v0.8.0"
+                "source": "https://github.com/Particle-Academy/laravel-fun-lab/tree/v0.9.0"
             },
-            "time": "2026-11-17T05:23:27+00:00",
-            "published-time": "2026-11-17T05:28:13+00:00"
+            "time": "2026-11-19T18:30:11+00:00",
+            "published-time": "2026-11-19T18:59:42+00:00"
         },
         {
             "name": "particle-academy/last-word",

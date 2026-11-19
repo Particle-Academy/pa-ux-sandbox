@@ -11,7 +11,7 @@ import {
 } from "@particle-academy/fancy-sign-ui";
 import { DemoFrame } from "../shared/DemoFrame";
 import { quoteUrl, type QuoteInput } from "./quote";
-import { DEMO_TOKEN, createDemoSignClient, type DemoSignClient } from "./sign";
+import { DEMO_TOKEN, createDemoSignClient, pdfCompletion, type DemoSignClient } from "./sign";
 
 /**
  * The signer's side of fancy-sign, live: fancy-sign-ui's own SignerCeremony,
@@ -121,9 +121,9 @@ export function SignDemo({ input }: { input: QuoteInput }) {
                     </div>
                 </div>
 
-                {completed && envelope.completion && (
+                {completed && pdfCompletion(envelope.completion) && (
                     <div className="docs-sign__record">
-                        <CompletionCertificate completion={envelope.completion} events={events} title={envelope.title} surfaceId="documents-completion-certificate" />
+                        <CompletionCertificate completion={pdfCompletion(envelope.completion)!} events={events} title={envelope.title} surfaceId="documents-completion-certificate" />
                         <div className="docs-bridge__actions">
                             {signedPdf && (
                                 <Button href={signedPdf} download="signed-quote.pdf" icon="download" size="sm">

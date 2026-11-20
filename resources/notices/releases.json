@@ -5,7 +5,7 @@
         "change-council": "0.9.1",
         "charlotte": "0.4.0",
         "classroom": "0.7.0",
-        "dark-slide": "0.22.3",
+        "dark-slide": "0.23.0",
         "dark-slide-js": "0.20.3",
         "dark-slide-py": "0.15.3",
         "docs-mcp": "0.2.0",
@@ -85,7 +85,7 @@
         "fancy-service-token-js": "0.2.0",
         "fancy-service-token-py": "0.2.0",
         "fancy-sheets": "0.14.0",
-        "fancy-sign": "0.7.0",
+        "fancy-sign": "0.7.1",
         "fancy-sign-ui": "0.6.0",
         "fancy-slides": "0.25.2",
         "fancy-template": "0.5.0",
@@ -104,15 +104,15 @@
         "fancy-x-files-ui": "0.2.1",
         "fine-print": "0.8.0",
         "fine-print-py": "0.1.0",
-        "holy-sheet": "2.14.2",
+        "holy-sheet": "2.15.0",
         "holy-sheet-js": "2.14.2",
-        "holy-sheet-py": "0.13.3",
+        "holy-sheet-py": "0.14.0",
         "job-board": "0.5.1",
         "laravel-catalog": "0.13.0",
         "laravel-courses": "0.4.0",
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.9.0",
-        "laravel-jobs": "0.5.0",
+        "laravel-jobs": "0.6.0",
         "last-word": "0.21.0",
         "last-word-js": "0.17.0",
         "last-word-py": "0.12.2",
@@ -155,6 +155,46 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "holy-sheet-py",
+            "registry": "pypi",
+            "version": "0.14.0",
+            "published_at": "2026-11-20T04:27:58Z",
+            "first": false,
+            "summary": "read() names the sheet the workbook opens on"
+        },
+        {
+            "slug": "laravel-jobs",
+            "registry": "composer",
+            "version": "0.6.0",
+            "published_at": "2026-11-20T03:34:09Z",
+            "first": false,
+            "summary": "BREAKING: Laravel 13 is the minimum; an app on Laravel 12 or older can no longer install this; upgrade Laravel"
+        },
+        {
+            "slug": "dark-slide",
+            "registry": "composer",
+            "version": "0.23.0",
+            "published_at": "2026-11-20T03:34:05Z",
+            "first": false,
+            "summary": "BREAKING: Laravel 13 is the minimum; an app on Laravel 12 or older can no longer install this; upgrade Laravel"
+        },
+        {
+            "slug": "holy-sheet",
+            "registry": "composer",
+            "version": "2.15.0",
+            "published_at": "2026-11-20T03:19:41Z",
+            "first": false,
+            "summary": "read() names the sheet the workbook opens on"
+        },
+        {
+            "slug": "fancy-sign",
+            "registry": "composer",
+            "version": "0.7.1",
+            "published_at": "2026-11-19T23:21:25Z",
+            "first": false,
+            "summary": "Host hooks for envelope.completed / seal.applied now fire after the envelope is saved; listeners can call attachFinal…"
+        },
         {
             "slug": "fancy-passkeys-ui",
             "registry": "npm",
@@ -7098,46 +7138,6 @@
             "published_at": "2026-09-21T16:51:40Z",
             "first": false,
             "summary": "What changed since my last turn"
-        },
-        {
-            "slug": "prism-human-plus-ts",
-            "registry": "npm",
-            "version": "0.2.0",
-            "published_at": "2026-09-21T04:30:23Z",
-            "first": false,
-            "summary": "Two writers, and what changed since my last turn"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.60.1",
-            "published_at": "2026-09-21T03:53:26Z",
-            "first": false,
-            "summary": "humanValues() and humanApproved()"
-        },
-        {
-            "slug": "prism-harness-py",
-            "registry": "pypi",
-            "version": "0.2.0",
-            "published_at": "2026-09-21T03:16:44Z",
-            "first": false,
-            "summary": "Structured turns"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.60.0",
-            "published_at": "2026-09-21T03:15:27Z",
-            "first": false,
-            "summary": "Any pausing executor can now read its own human answer"
-        },
-        {
-            "slug": "prism-harness-ts",
-            "registry": "npm",
-            "version": "0.5.0",
-            "published_at": "2026-09-21T01:59:37Z",
-            "first": false,
-            "summary": "Structured turns"
         }
     ]
 }

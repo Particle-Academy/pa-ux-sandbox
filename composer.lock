@@ -3752,16 +3752,16 @@
         },
         {
             "name": "particle-academy/dark-slide",
-            "version": "v0.22.3",
+            "version": "v0.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/dark-slide.git",
-                "reference": "9590294b24ad22df804e11c7ac1b7c30ce693907"
+                "reference": "e9781df9dc3407d80f34f24245fda51d73d100ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/9590294b24ad22df804e11c7ac1b7c30ce693907",
-                "reference": "9590294b24ad22df804e11c7ac1b7c30ce693907",
+                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/e9781df9dc3407d80f34f24245fda51d73d100ed",
+                "reference": "e9781df9dc3407d80f34f24245fda51d73d100ed",
                 "shasum": ""
             },
             "require": {
@@ -3770,14 +3770,16 @@
                 "ext-zip": "*",
                 "php": "^8.4"
             },
+            "conflict": {
+                "illuminate/support": "<13.0",
+                "laravel/framework": "<13.0"
+            },
             "require-dev": {
-                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
                 "particle-academy/fancy-conformance": "0.34",
-                "pestphp/pest": "^3.0|^4.0",
-                "phpunit/phpunit": "^10.0|^11.0|^12.0"
+                "pestphp/pest": "^5.0"
             },
             "suggest": {
-                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Compatible with 10.x through 13.x. The core DarkSlide\\Agent + writer require zero framework."
+                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Needs ^13.0 (Laravel 13+). The core DarkSlide\\Agent + writer require zero framework."
             },
             "bin": [
                 "bin/dark-slide"
@@ -3808,7 +3810,7 @@
                     "homepage": "https://github.com/Particle-Academy"
                 }
             ],
-            "description": "Standalone presentation read/write tool for agentic deck creation. Framework-agnostic PHP core that writes .pptx (Office Open XML) with inline markdown formatting + headings, real tables, gradient backgrounds, syntax-highlighted code, and embedded media — and reads them back with high fidelity. Optional Laravel 10-13 integration. Designed to round-trip with the @particle-academy/fancy-slides JS package's Deck schema.",
+            "description": "Standalone presentation read/write tool for agentic deck creation. Framework-agnostic PHP core that writes .pptx (Office Open XML) with inline markdown formatting + headings, real tables, gradient backgrounds, syntax-highlighted code, and embedded media — and reads them back with high fidelity. Optional Laravel 13 integration. Designed to round-trip with the @particle-academy/fancy-slides JS package's Deck schema.",
             "homepage": "https://github.com/Particle-Academy/dark-slide",
             "keywords": [
                 "PowerPoint",
@@ -3825,7 +3827,8 @@
                 "issues": "https://github.com/Particle-Academy/dark-slide/issues",
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
-            "time": "2026-11-10T23:55:05+00:00"
+            "time": "2026-11-20T03:34:05+00:00",
+            "published-time": "2026-11-20T05:09:32+00:00"
         },
         {
             "name": "particle-academy/fancy-captcha",
@@ -4714,30 +4717,33 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.14.2",
+            "version": "v2.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "3227ae2daf4acb88c774203c03d15290d01cc929"
+                "reference": "f66d8dba0e340676fbd032a6b1876373dd39bfe2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/3227ae2daf4acb88c774203c03d15290d01cc929",
-                "reference": "3227ae2daf4acb88c774203c03d15290d01cc929",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/f66d8dba0e340676fbd032a6b1876373dd39bfe2",
+                "reference": "f66d8dba0e340676fbd032a6b1876373dd39bfe2",
                 "shasum": ""
             },
             "require": {
                 "ext-zip": "*",
                 "php": "^8.4"
             },
+            "conflict": {
+                "illuminate/support": "<13.0",
+                "laravel/framework": "<13.0"
+            },
             "require-dev": {
-                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+                "laravel/framework": "^13.0",
                 "particle-academy/fancy-conformance": "0.37.0",
-                "pestphp/pest": "^3.0|^4.0",
-                "phpunit/phpunit": "^10.0|^11.0|^12.0"
+                "pestphp/pest": "^5.0"
             },
             "suggest": {
-                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Compatible with 10.x through 13.x. The core HolySheet\\Agent + writer require zero framework."
+                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Needs ^13.0 (Laravel 13+). The core HolySheet\\Agent + writer require zero framework."
             },
             "bin": [
                 "bin/holy-sheet"
@@ -4768,7 +4774,7 @@
                     "homepage": "https://github.com/Particle-Academy"
                 }
             ],
-            "description": "Standalone spreadsheet writing tool for agentic document creation. Framework-agnostic core with optional Laravel 10-13 integration.",
+            "description": "Standalone spreadsheet writing tool for agentic document creation. Framework-agnostic core with optional Laravel 13 integration.",
             "homepage": "https://github.com/Particle-Academy/holy-sheet",
             "keywords": [
                 "OpenDocument",
@@ -4786,7 +4792,8 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-11-11T00:32:53+00:00"
+            "time": "2026-11-20T03:19:41+00:00",
+            "published-time": "2026-11-20T04:23:55+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",

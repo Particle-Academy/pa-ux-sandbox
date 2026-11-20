@@ -150,11 +150,19 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.29.0",
+        "react-fancy": "6.29.1",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.29.1",
+            "published_at": "2026-11-20T12:51:21Z",
+            "first": false,
+            "summary": "Tests and docs for PromptInput attachments (CC-fancy-0043)"
+        },
         {
             "slug": "fancy-live",
             "registry": "composer",

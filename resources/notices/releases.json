@@ -31,7 +31,7 @@
         "fancy-compliance": "0.1.2",
         "fancy-compliance-ui": "0.4.0",
         "fancy-conformance": "0.58.0",
-        "fancy-connector-core": "0.15.2",
+        "fancy-connector-core": "0.16.0",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.6.0",
         "fancy-doc-commons": "0.4.0",
@@ -65,9 +65,9 @@
         "fancy-http-errors": "0.1.0",
         "fancy-http-guard-py": "0.1.0",
         "fancy-inertia": "0.16.0",
-        "fancy-live": "0.1.0",
+        "fancy-live": "0.2.0",
         "fancy-map": "0.2.1",
-        "fancy-mlm": "0.5.0",
+        "fancy-mlm": "0.6.0",
         "fancy-mlm-js": "0.5.0",
         "fancy-mlm-ui": "0.5.0",
         "fancy-motion": "0.3.0",
@@ -80,7 +80,7 @@
         "fancy-qr": "0.1.0",
         "fancy-query": "0.10.0",
         "fancy-screens": "0.7.1",
-        "fancy-seo": "0.6.0",
+        "fancy-seo": "0.7.0",
         "fancy-service-token": "0.1.0",
         "fancy-service-token-js": "0.2.0",
         "fancy-service-token-py": "0.2.0",
@@ -109,7 +109,7 @@
         "holy-sheet-py": "0.14.0",
         "job-board": "0.5.1",
         "laravel-catalog": "0.13.0",
-        "laravel-courses": "0.4.0",
+        "laravel-courses": "0.5.0",
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.9.0",
         "laravel-jobs": "0.6.0",
@@ -155,6 +155,46 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "fancy-live",
+            "registry": "composer",
+            "version": "0.2.0",
+            "published_at": "2026-11-20T08:32:21Z",
+            "first": false,
+            "summary": "BREAKING: Laravel 13 is the minimum; an app on Laravel 12 or older can no longer install this; upgrade Laravel"
+        },
+        {
+            "slug": "fancy-mlm",
+            "registry": "composer",
+            "version": "0.6.0",
+            "published_at": "2026-11-20T08:32:20Z",
+            "first": false,
+            "summary": "BREAKING: Laravel 13 is the minimum; an app on Laravel 12 or older can no longer install this; upgrade Laravel"
+        },
+        {
+            "slug": "fancy-seo",
+            "registry": "composer",
+            "version": "0.7.0",
+            "published_at": "2026-11-20T08:32:20Z",
+            "first": false,
+            "summary": "BREAKING: Laravel 13 is the minimum; an app on Laravel 12 or older can no longer install this; upgrade Laravel"
+        },
+        {
+            "slug": "laravel-courses",
+            "registry": "composer",
+            "version": "0.5.0",
+            "published_at": "2026-11-20T08:32:18Z",
+            "first": false,
+            "summary": "BREAKING: Laravel 13 is the minimum; an app on Laravel 12 or older can no longer install this; upgrade Laravel"
+        },
+        {
+            "slug": "fancy-connector-core",
+            "registry": "npm",
+            "version": "0.16.0",
+            "published_at": "2026-11-20T08:31:36Z",
+            "first": false,
+            "summary": null
+        },
         {
             "slug": "holy-sheet-py",
             "registry": "pypi",

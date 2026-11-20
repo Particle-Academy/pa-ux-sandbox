@@ -4313,28 +4313,31 @@
         },
         {
             "name": "particle-academy/fancy-mlm",
-            "version": "v0.5.0",
+            "version": "v0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-mlm-php.git",
-                "reference": "efeb1ae9702a9d06babcc71680ec8abd8d8ed2e2"
+                "reference": "5154757c8f8168279d996c8965ecbe5185826035"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-mlm-php/zipball/efeb1ae9702a9d06babcc71680ec8abd8d8ed2e2",
-                "reference": "efeb1ae9702a9d06babcc71680ec8abd8d8ed2e2",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-mlm-php/zipball/5154757c8f8168279d996c8965ecbe5185826035",
+                "reference": "5154757c8f8168279d996c8965ecbe5185826035",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.4"
             },
+            "conflict": {
+                "illuminate/support": "<13.0",
+                "laravel/framework": "<13.0"
+            },
             "require-dev": {
-                "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "pestphp/pest": "^3.0|^4.0",
-                "phpunit/phpunit": "^10.0|^11.0|^12.0"
+                "laravel/framework": "^13.0",
+                "pestphp/pest": "^5.0"
             },
             "suggest": {
-                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, models, and fun-lab listener. Compatible with 11.x through 13.x. The core FancyMlm engine requires zero framework.",
+                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, models, and fun-lab listener. Needs ^13.0 (Laravel 13+). The core FancyMlm engine requires zero framework.",
                 "particle-academy/laravel-catalog": "Anchors monetary commissions to real catalog sales (Cashier webhooks + Stripe metadata).",
                 "particle-academy/laravel-fms": "Models referral tiers as feature groups and scales bonus caps via resource-feature limits.",
                 "particle-academy/laravel-fun-lab": "Enables the gamified referral loop — award upline members when a referral acts."
@@ -4365,7 +4368,7 @@
                     "homepage": "https://github.com/Particle-Academy"
                 }
             ],
-            "description": "Framework-agnostic multi-level referral / network-marketing engine for agentic apps. Pure PHP core with an optional Laravel 11-13 bridge and fun-lab / catalog / fms integration.",
+            "description": "Framework-agnostic multi-level referral / network-marketing engine for agentic apps. Pure PHP core with an optional Laravel 13 bridge and fun-lab / catalog / fms integration.",
             "homepage": "https://github.com/Particle-Academy/fancy-mlm-php",
             "keywords": [
                 "agentic",
@@ -4380,7 +4383,8 @@
                 "issues": "https://github.com/Particle-Academy/fancy-mlm-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-mlm-php"
             },
-            "time": "2026-11-05T02:26:20+00:00"
+            "time": "2026-11-20T08:32:20+00:00",
+            "published-time": "2026-11-20T08:46:43+00:00"
         },
         {
             "name": "particle-academy/fancy-qr",
@@ -4444,19 +4448,20 @@
         },
         {
             "name": "particle-academy/fancy-seo",
-            "version": "v0.6.0",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-seo.git",
-                "reference": "f9fb951b09536bc653325e2bd234bd00892426de"
+                "reference": "cd949345a04f0bc7eabf80884709978040880efb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-seo/zipball/f9fb951b09536bc653325e2bd234bd00892426de",
-                "reference": "f9fb951b09536bc653325e2bd234bd00892426de",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-seo/zipball/cd949345a04f0bc7eabf80884709978040880efb",
+                "reference": "cd949345a04f0bc7eabf80884709978040880efb",
                 "shasum": ""
             },
             "require": {
+                "illuminate/console": "^13.0",
                 "illuminate/contracts": "^13.0",
                 "illuminate/http": "^13.0",
                 "illuminate/routing": "^13.0",
@@ -4465,9 +4470,9 @@
                 "php": "^8.4"
             },
             "require-dev": {
+                "laravel/framework": "^13.0",
                 "laravel/pint": "^1.26",
-                "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "pestphp/pest": "^3.0|^4.0"
+                "pestphp/pest": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -4513,7 +4518,8 @@
                 "issues": "https://github.com/Particle-Academy/fancy-seo/issues",
                 "source": "https://github.com/Particle-Academy/fancy-seo"
             },
-            "time": "2026-10-02T06:07:08+00:00"
+            "time": "2026-11-20T08:32:20+00:00",
+            "published-time": "2026-11-20T08:42:57+00:00"
         },
         {
             "name": "particle-academy/fancy-template",
@@ -4847,16 +4853,16 @@
         },
         {
             "name": "particle-academy/laravel-courses",
-            "version": "v0.4.0",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-courses.git",
-                "reference": "071b605d126992624ef007d40a6615b52564c0af"
+                "reference": "6b0acb9e0cc52b8be2de0c7370d02bfcabadbd11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-courses/zipball/071b605d126992624ef007d40a6615b52564c0af",
-                "reference": "071b605d126992624ef007d40a6615b52564c0af",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-courses/zipball/6b0acb9e0cc52b8be2de0c7370d02bfcabadbd11",
+                "reference": "6b0acb9e0cc52b8be2de0c7370d02bfcabadbd11",
                 "shasum": ""
             },
             "require": {
@@ -4866,13 +4872,13 @@
                 "illuminate/routing": "^13.0",
                 "illuminate/support": "^13.0",
                 "illuminate/validation": "^13.0",
+                "laravel/framework": "^13.0",
                 "particle-academy/fancy-template": ">=0.3.0 <2.0",
                 "particle-academy/fine-print": ">=0.3.0 <2.0",
                 "php": "^8.4"
             },
             "require-dev": {
-                "orchestra/testbench": "^11.0",
-                "phpunit/phpunit": "^12.0"
+                "pestphp/pest": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -4895,9 +4901,10 @@
             "description": "Laravel package for selling and serving educational curriculums, courses, tests, and certificates.",
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-courses/issues",
-                "source": "https://github.com/Particle-Academy/laravel-courses/tree/v0.4.0"
+                "source": "https://github.com/Particle-Academy/laravel-courses/tree/v0.5.0"
             },
-            "time": "2026-11-01T18:38:24+00:00"
+            "time": "2026-11-20T08:32:18+00:00",
+            "published-time": "2026-11-20T08:39:27+00:00"
         },
         {
             "name": "particle-academy/laravel-fms",
